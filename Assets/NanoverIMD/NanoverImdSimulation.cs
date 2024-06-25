@@ -200,6 +200,17 @@ namespace NanoverImd
             Trajectory.Reset();
         }
 
+        public void StepForwardTrajectory()
+        {
+            Trajectory.Step();
+        }
+
+
+        public void StepBackwardTrajectory()
+        {
+            Trajectory.StepBackward();
+        }
+
         /// <summary>
         /// Reset the box to the unit position.
         /// </summary>

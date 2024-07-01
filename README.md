@@ -7,13 +7,18 @@ This repository is maintained by the Intangible Realities Laboratory, University
 and distributed under [GPLv3](LICENSE).
 See [the list of contributors](CONTRIBUTORS.md) for the individual authors of the project.
 
-# Run the latest development build
-
-To run Nanover iMD, you need [SteamVR](https://www.steamvr.com/) installed.
-
-* Download the [latest Windows build](https://github.com/IRL2/nanover-imd/releases/download/nightly/StandaloneWindows64.zip) from the [nightly release](https://github.com/IRL2/nanover-imd/releases/tag/nightly).
+# Run the latest release build
+* Download the [latest builds](https://github.com/IRL2/nanover-imd/releases).
 * Extract the downloaded zip file.
-* In the extracted directory, launch `StandaloneWindows64.exe`. Windows will likely prompt you with a warning about the executable not being signed. If it happens, click on the "More info" button, then "Run anyway". You will also likely be prompted by the Windows firewall, allow Nanover to access the network.
+
+* In the extracted directory,
+
+## Android (Meta Quest etc)
+* Sideload the `NanoVerIMD.apk` onto your device (you can use [SideQuest](https://sidequestvr.com/) for this).
+* Look in the `Unknown Sources` section of your apps list and run NanoVer IMD.
+
+## Windows (OpenXR / Meta Quest Link etc)
+* In the extracted directory, launch `StandaloneWindows64.exe`. Windows will likely prompt you with a warning about the executable not being signed. If it happens, click on the "More info" button, then "Run anyway". You will also likely be prompted by the Windows firewall, allow NanoVer to access the network.
 
 # Installation with conda
 
@@ -27,6 +32,7 @@ To run Nanover iMD, you need [SteamVR](https://www.steamvr.com/) installed.
 # Installation for Development
 
 *  Clone this repository to a folder on your computer.
+*  Update the submodules with `git submodule sync` and `git submodule update --init --recursive --remote`.
 *  Download Unity Hub by visiting the [Unity Download Page](https://unity3d.com/get-unity/download) and clicking the green **Download Unity Hub** button.
 *  Install Unity Hub onto your computer.
 *  Go to the [Unity Download Archive](https://unity3d.com/get-unity/download/archive) and click the green **Unity Hub** download button next to the label **2019.3.0** (the version required for this project)

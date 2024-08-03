@@ -8,8 +8,6 @@ history shows individual contributions.
 
 Refer to the commit history for further details.
 
-## 2019:
-
 Jonathan Barnoud (Intangible Realities Laboratory, University of Bristol, UK)
 Alex Jamieson-Binnie (Intangible Realities Laboratory, University of Bristol, UK)
 Adam McSloy (University of Bristol, UK)

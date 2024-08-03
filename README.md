@@ -1,10 +1,10 @@
 # Nanover iMD
 
-Interactive Molecular Dynamics (iMD) in VR, an application built with the Nanover
+Interactive Molecular Dynamics (iMD) in VR, an application built with the NanoVer
 framework.
 
-This repository is maintained by the Intangible Realities Laboratory, University Of Bristol,
-and distributed under [GPLv3](LICENSE).
+This repository is maintained by the Intangible Realities Laboratory at the University of Santiago de Compostela,
+and distributed under the [MIT](LICENSE) license.
 See [the list of contributors](CONTRIBUTORS.md) for the individual authors of the project.
 
 # Run the latest release build

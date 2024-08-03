@@ -15,7 +15,3 @@ Alex Jamieson-Binnie (Intangible Realities Laboratory, University of Bristol, UK
 Adam McSloy (University of Bristol, UK)
 Mike O'Connor (Intangible Realities Laboratory, University of Bristol, UK)
 Mark Wonnacott (Intangible Realities Laboratory, University of Santiago de Compostela, UK)
-
-## Logo 
-
-The Nanover iMD logo was designed by Alex Jamieson-Binnie, licensed under CC-BY-SA.

@@ -8,6 +8,8 @@ using Nanover.Core.Math;
 using UnityEngine.XR;
 using System.Collections.Generic;
 using Nanover.Grpc.Multiplayer;
+using Nanover.Frontend.Controllers;
+using Nanover.Visualisation.Properties.Collections;
 
 namespace NanoverImd
 {
@@ -26,6 +28,7 @@ namespace NanoverImd
 
         public NanoverImdSimulation Simulation => simulation;
 
+        public bool ManualColocation { get; set; } = false;
         public bool ColocateLighthouses { get; set; } = false;
         public float PlayAreaRotationCorrection { get; set; } = 0;
         public float PlayAreaRadialDisplacementFactor { get; set; } = 0;
@@ -81,11 +84,18 @@ namespace NanoverImd
 
         private void Update()
         {
+            if (ManualColocation)
+            {
 
-            if (ColocateLighthouses)
+            }
+            else if (ColocateLighthouses)
+            {
                 CalibratedSpace.CalibrateFromLighthouses();
+            }
             else
+            {
                 CalibrateFromRemote();
+            }
 
             UpdatePlayArea();
         }
@@ -126,6 +136,43 @@ namespace NanoverImd
             {
                 var transform = new Transformation(position, Quaternion.identity, Vector3.one);
                 return CalibratedSpace.TransformPoseWorldToCalibrated(transform).Position;
+            }
+        }
+
+        private List<Transformation> poses = new List<Transformation>();
+
+        public void RunCalibration()
+        {
+            poses.Clear();
+            ManualColocation = true;
+
+            var hand = InputDeviceCharacteristics.Right;
+            var button = hand.WrapUsageAsButton(CommonUsages.triggerButton);
+            button.Pressed += OnPressed;
+
+            void OnPressed()
+            {
+                if (hand.GetFirstDevice().GetSinglePose() is { } pose)
+                {
+                    poses.Add(pose);
+
+                    if (poses.Count >= 2)
+                        OnReady();
+                }
+            }
+
+            void OnReady()
+            {
+                button.Pressed -= OnPressed;
+
+                var point0 = poses[0].Position;
+                var point1 = poses[1].Position;
+                
+                // assume that headsets agree on y-axis
+                point0.y = 0;
+                point1.y = 0;
+
+                CalibratedSpace.CalibrateFromTwoControlPoints(point0, point1);
             }
         }
 

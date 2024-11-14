@@ -80,10 +80,6 @@ namespace NanoverImd.Interaction
                 return null;
             
             var selection = visualisationScene.GetSelectionForParticle(particleIndex.Value);
-
-            if (selection.Selection.InteractionMethod == ParticleSelection.InteractionMethodNone)
-                return null;
-
             var indices = GetInteractionIndices(particleIndex.Value);
 
             var grab = new ActiveParticleGrab(indices);
@@ -159,7 +155,10 @@ namespace NanoverImd.Interaction
                 var particlePosition = frame.ParticlePositions[i];
                 var sqrDistance = Vector3.SqrMagnitude(position - particlePosition);
 
-                if (sqrDistance < bestSqrDistance)
+                var selection = visualisationScene.GetSelectionForParticle(i);
+                var interactable = (selection.Selection.InteractionMethod != ParticleSelection.InteractionMethodNone);
+
+                if (interactable && sqrDistance < bestSqrDistance)
                 {
                     bestSqrDistance = sqrDistance;
                     bestParticleIndex = i;

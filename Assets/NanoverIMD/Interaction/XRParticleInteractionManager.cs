@@ -104,10 +104,12 @@ namespace NanoverImd.Interaction
         private IActiveManipulation AttemptGrabObjectUser(UnitScaleTransformation grabberPose, string label)
         {
             // there is presently only one grabbable set of objects
-            var grab = simulation.ManipulableParticles.StartParticleGrab(grabberPose);
+            if (simulation.ManipulableParticles.StartParticleGrab(grabberPose) is not { } grab)
+                return null;
+
             grab.OwnerId = simulation.Multiplayer.AccessToken;
             grab.Label = label;
-
+              
             return grab;
         }
     }

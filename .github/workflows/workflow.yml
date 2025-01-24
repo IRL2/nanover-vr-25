@@ -168,7 +168,7 @@ jobs:
         with:
           name: Build
           path: ./conda/artifacts
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           miniforge-version: latest
@@ -209,11 +209,11 @@ jobs:
         shell: bash -el {0}
     steps:
       - uses: actions/checkout@v3
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           # WARNING! On the contrary to all the other places where we install
-          # conda, we install miniconda and NOT miniforge!
+          # conda, we install miniconda and NOT mi0niforge!
           # This is because we do not need packages to RUN nanover, but packages
           # from the default (anaconda) channel to upload to anaconda.
           miniconda-version: latest
@@ -236,7 +236,7 @@ jobs:
       - name: Upload packages
         # Anaconda will complain if the given version of a package is already
         # there. Until we have some versioning, we force the upload.
-        run: anaconda  upload --user irl conda-bld/win-64/nanover-*.tar.bz2 --force
+        run: anaconda  upload --user irl conda-bld/win-64/nanover-*.conda --force
       - name: Disconnect from Anaconda cloud
         #  Do not fail the build if we cannot logout.
         run: anaconda logout || echo "Could not logout. Too bad."

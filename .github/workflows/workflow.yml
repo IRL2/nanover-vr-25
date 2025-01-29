@@ -8,9 +8,46 @@ on:
       - "**"
 
 jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    concurrency:
+      group: needs-license
+    steps:
+      # Checkout
+      - name: Checkout repository ⬇️
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: true
+
+      # Cache
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v4
+        id: run_tests
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+      - name: Upload test results 📖
+        uses: actions/upload-artifact@v4
+        if: always() && steps.run_tests.outcome == 'failure'
+        with:
+          name: Test results
+          path: artifacts
+
   build-pcvr:
     name: Build PC-VR ✨
     runs-on: ubuntu-latest
+    needs: [tests]
     concurrency:
       group: needs-license
     steps:
@@ -91,42 +128,6 @@ jobs:
           name: Build-APK
           path: build
 
-  tests:
-    name: Run tests
-    runs-on: ubuntu-latest
-    concurrency:
-      group: needs-license
-    steps:
-      # Checkout
-      - name: Checkout repository ⬇️
-        uses: actions/checkout@v4
-        with:
-          lfs: true
-          submodules: true
-
-      # Cache
-      - uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-          restore-keys: |
-            Library-
-
-      - name: Run tests
-        uses: game-ci/unity-test-runner@v4
-        id: run_tests
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-
-      - name: Upload test results 📖
-        uses: actions/upload-artifact@v4
-        if: always() && steps.run_tests.outcome == 'failure'
-        with:
-          name: Test results
-          path: artifacts
-
   nightly:
     name: Publish the latest Build
     runs-on: ubuntu-latest
@@ -167,7 +168,7 @@ jobs:
   conda:
     name: Build the conda Packages
     runs-on: windows-latest
-    needs: [build-pcvr, build-apk, tests]
+    needs: [build-pcvr, tests]
     if: github.ref == 'refs/heads/main'
     steps:
       # We need to download the source code to get the version number
@@ -208,11 +209,15 @@ jobs:
           ls -R conda
           echo "build_number: $env:build_number"
           echo "frontend_version: $env:frontend_version"
-          conda build --numpy 1.11 --no-anaconda-upload --no-test .\conda
-      - uses: actions/upload-artifact@v4
+          conda-build .\conda --prefix-length=10 --no-test --no-anaconda-upload --output-folder .\dist\conda-bld
+      - run: |
+          mkdir artifacts
+          cp -r ./dist/conda-bld ./artifacts
+      - name: Save the artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: conda-bld
-          path: ${CONDA_PREFIX}\conda-bld
+          name: conda-packages
+          path: ./artifacts
 
   publish-conda:
     name: Publish the conda package on Anaconda cloud
@@ -237,8 +242,7 @@ jobs:
       - name: Retrieve conda packages
         uses: actions/download-artifact@v4
         with:
-          name: conda-bld
-          path: ./conda-bld
+          name: conda-packages
       - run: |
           ls
           ls conda-bld
@@ -253,7 +257,7 @@ jobs:
       - name: Upload packages
         # Anaconda will complain if the given version of a package is already
         # there. Until we have some versioning, we force the upload.
-        run: anaconda  upload --user irl conda-bld/win-64/nanover-*.conda --force
+        run: anaconda upload --user irl conda-bld/win-64/nanover-*.conda --force
       - name: Disconnect from Anaconda cloud
         #  Do not fail the build if we cannot logout.
         run: anaconda logout || echo "Could not logout. Too bad."

@@ -1,0 +1,28 @@
+{
+    "name": "Nanover.Visualisation.Tests",
+    "references": [
+        "Nanover.Visualisation",
+        "Nanover.Testing",
+        "Nanover.Frame",
+        "Nanover.Core",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "NSubstitute.dll",
+        "System.Threading.Tasks.Extensions.dll",
+        "nunit.framework.dll",
+        "Nanover.Protocol.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": []
+}

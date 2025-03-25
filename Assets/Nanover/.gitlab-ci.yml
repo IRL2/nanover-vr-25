@@ -1,0 +1,31 @@
+image: debian
+stages:
+  - deploy
+
+before_script:
+  - 'which git || ( apt-get update -y && apt-get install git-core -y )'
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
+  - git config --global user.email "intangible.realities.laboratory@gmail.com"
+  - git config --global user.name "Nanover Autoupdate"
+
+update_plugin:
+  stage: deploy
+  only:
+    - master
+  script:
+    # clone both the Nanover iMD and the Nanover Unity plugin repo
+    - git clone https://intangibledocs:${PERSONAL_ACCESS_TOKEN}@gitlab.com/intangiblerealities/narupa-unity-plugin.git
+    - git clone https://intangibledocs:${PERSONAL_ACCESS_TOKEN}@gitlab.com/intangiblerealities/narupa-applications/narupa-imd.git
+    # copy the latest version of the Nanover plugin from iMD to Nanover plugin repo
+    - mkdir tmp
+    - mv narupa-unity-plugin/.git tmp
+    - rm -r narupa-unity-plugin/*
+    - cp -r narupa-imd/Assets/Plugins/Nanover/* narupa-unity-plugin
+    - mv tmp/.git narupa-unity-plugin/
+    - cd narupa-unity-plugin
+    - git add .
+    - git status
+    # only commit if something has changed
+    - git diff --quiet && git diff --staged --quiet || git commit -am 'Auto-update Nanover libraries'
+    - git push https://intangibledocs:${PERSONAL_ACCESS_TOKEN}@gitlab.com/intangiblerealities/narupa-unity-plugin.git HEAD:master

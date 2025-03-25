@@ -1,0 +1,37 @@
+name: Tests
+on: push
+
+jobs:
+  tests:
+    name: Running the tests ⚙
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout host Unity project 🥚
+        uses: actions/checkout@v4
+        with:
+          ref: refs/heads/host-project/2022.3.21f1
+      - name: Checkout repository ⬇️
+        uses: actions/checkout@v4
+        with:
+          path: Assets/Plugins/Nanover
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v4
+        id: run_tests
+        with:
+          testMode: EditMode
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      - name: Upload test results 📖
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test results
+          path: artifacts

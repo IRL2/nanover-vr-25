@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eea82917a32c4da68e498801f179df6c, type: 3}
+  m_Name: RCSB Residues
+  m_EditorClassIdentifier: 
+  defaultColor: {r: 0, g: 1, b: 0.15586257, a: 1}
+  dictionary:
+  - value: ALA
+    color: {r: 0.54901963, g: 1, b: 0.54901963, a: 1}
+  - value: ARG
+    color: {r: 0, g: 0, b: 0.48627454, a: 1}
+  - value: ASN
+    color: {r: 1, g: 0.48627454, b: 0.43921572, a: 1}
+  - value: ASP
+    color: {r: 0.627451, g: 0, b: 0.25882354, a: 1}
+  - value: CYS
+    color: {r: 1, g: 1, b: 0.43921572, a: 1}
+  - value: GLN
+    color: {r: 1, g: 0.29803923, b: 0.29803923, a: 1}
+  - value: GLU
+    color: {r: 0.40000004, g: 0, b: 0, a: 1}
+  - value: GLY
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - value: HIS
+    color: {r: 0.43921572, g: 0.43921572, b: 1, a: 1}
+  - value: ILE
+    color: {r: 0, g: 0.29803923, b: 0, a: 1}
+  - value: LEU
+    color: {r: 0.27058825, g: 0.36862746, b: 0.27058825, a: 1}
+  - value: LYS
+    color: {r: 0.2784314, g: 0.2784314, b: 0.72156864, a: 1}
+  - value: MET
+    color: {r: 0.72156864, g: 0.627451, b: 0.25882354, a: 1}
+  - value: PHE
+    color: {r: 0.3254902, g: 0.29803923, b: 0.32156864, a: 1}
+  - value: PRO
+    color: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
+  - value: SER
+    color: {r: 1, g: 0.43921572, b: 0.25882354, a: 1}
+  - value: THR
+    color: {r: 0.72156864, g: 0.29803923, b: 0, a: 1}
+  - value: TRP
+    color: {r: 0.30980393, g: 0.27450982, b: 0, a: 1}
+  - value: TYR
+    color: {r: 0.54901963, g: 0.43921572, b: 0.29803923, a: 1}
+  - value: VAL
+    color: {r: 1, g: 0.54901963, b: 1, a: 1}
+  - value: A
+    color: {r: 0.86274517, g: 0.078431375, b: 0.23529413, a: 1}
+  - value: DA
+    color: {r: 0.86274517, g: 0.078431375, b: 0.23529413, a: 1}
+  - value: G
+    color: {r: 0.19607845, g: 0.80392164, b: 0.19607845, a: 1}
+  - value: DG
+    color: {r: 0.19607845, g: 0.80392164, b: 0.19607845, a: 1}
+  - value: I
+    color: {r: 0.6039216, g: 0.80392164, b: 0.19607845, a: 1}
+  - value: DI
+    color: {r: 0.6039216, g: 0.80392164, b: 0.19607845, a: 1}
+  - value: X
+    color: {r: 0.48627454, g: 0.98823535, b: 0, a: 1}
+  - value: DX
+    color: {r: 0.48627454, g: 0.98823535, b: 0, a: 1}
+  - value: C
+    color: {r: 1, g: 0.8431373, b: 0, a: 1}
+  - value: DC
+    color: {r: 1, g: 0.8431373, b: 0, a: 1}
+  - value: T
+    color: {r: 0.25490198, g: 0.41176474, b: 0.882353, a: 1}
+  - value: DT
+    color: {r: 0.25490198, g: 0.41176474, b: 0.882353, a: 1}
+  - value: U
+    color: {r: 0.2509804, g: 0.87843144, b: 0.81568635, a: 1}
+  - value: DU
+    color: {r: 0.2509804, g: 0.87843144, b: 0.81568635, a: 1}
+  - value: D
+    color: {r: 0, g: 0.54509807, b: 0.54509807, a: 1}
+  - value: DD
+    color: {r: 0, g: 0.54509807, b: 0.54509807, a: 1}

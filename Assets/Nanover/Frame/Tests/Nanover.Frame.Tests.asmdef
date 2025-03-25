@@ -1,0 +1,25 @@
+{
+    "name": "Nanover.Frame.Tests",
+    "references": [
+        "Nanover.Frame",
+        "Nanover.Core"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Nanover.Protocol.dll",
+        "NSubstitute.dll",
+        "System.Threading.Tasks.Extensions.dll",
+        "Google.Protobuf.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": []
+}

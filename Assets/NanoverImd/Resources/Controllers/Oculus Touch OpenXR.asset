@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 147d743152d75b346866ef0a4600e9ae, type: 3}
+  m_Name: Oculus Touch OpenXR
+  m_EditorClassIdentifier: 
+  controllerIdRegex: Oculus Touch Controller OpenXR
+  leftController:
+    prefab: {fileID: 2543036398859962509, guid: b84bfe87481c00d43b8e66146cc2c89d,
+      type: 3}
+    hideSteamVrModel: 1
+  rightController:
+    prefab: {fileID: 2543036398859962509, guid: 705f064d568aab5468eae1cb8333e07c,
+      type: 3}
+    hideSteamVrModel: 1

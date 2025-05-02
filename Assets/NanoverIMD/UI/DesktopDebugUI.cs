@@ -60,9 +60,14 @@ namespace NanoverImd
             {
                 GUILayout.Box("User");
                 GUILayout.Label(
-                    $"Interaction Force: {simulation.ManipulableParticles.ForceScale:0.}x");
+                    $"Interaction Force Scale: {simulation.ManipulableParticles.ForceScale:0.}x");
                 simulation.ManipulableParticles.ForceScale =
                     GUILayout.HorizontalSlider(simulation.ManipulableParticles.ForceScale, 0, 5000);
+
+                GUILayout.Label(
+                    $"Interaction Force Type:");
+                simulation.ManipulableParticles.ForceType =
+                    GUILayout.TextField(simulation.ManipulableParticles.ForceType);
 
                 GUILayout.Box("Simulation");
                 if (GUILayout.Button("Play"))

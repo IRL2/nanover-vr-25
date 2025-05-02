@@ -98,9 +98,26 @@ namespace NanoverImd
             }
 
             UpdatePlayArea();
+            UpdateSuggestedParameters();
         }
 
         private Vector3 playareaSize = Vector3.zero;
+
+        private void UpdateSuggestedParameters()
+        {
+            const string scaleKey = "suggested.interaction.scale";
+            const string typeKey = "suggested.interaction.type";
+
+            if (simulation.Multiplayer.GetSharedState(scaleKey) is double scale)
+            {
+                simulation.ManipulableParticles.ForceScale = (float) scale;
+            }
+
+            if (simulation.Multiplayer.GetSharedState(typeKey) is string type)
+            {
+                simulation.ManipulableParticles.ForceType = type;
+            }
+        }
 
         /// <summary>
         /// Determine VR playarea size;

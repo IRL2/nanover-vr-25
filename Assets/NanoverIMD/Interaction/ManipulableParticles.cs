@@ -16,6 +16,7 @@ namespace Nanover.Frontend.Manipulation
         /// The force multiplier.
         /// </summary>
         public float ForceScale { get; set; } = 100f;
+        public string ForceType { get; set; } = "spring";
 
         private readonly Transform transform;
         private readonly ParticleInteractionCollection interactions;
@@ -80,7 +81,7 @@ namespace Nanover.Frontend.Manipulation
                 Particles = grab.ParticleIndices.ToList(),
                 Position = position,
                 Scale = ForceScale,
-                InteractionType = "spring",
+                InteractionType = ForceType,
                 ResetVelocities = grab.ResetVelocities,
                 Other = other.Count > 0 ? other : null,
             });

@@ -1,0 +1,193 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4265432535112186709
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1027445834820768729}
+  - component: {fileID: 4545272566148289077}
+  - component: {fileID: 3963503906544500847}
+  - component: {fileID: 3464585695043242776}
+  - component: {fileID: 6936130919244846093}
+  - component: {fileID: 8089090521469392611}
+  - component: {fileID: 4659525984902923030}
+  - component: {fileID: 4119878278907132683}
+  m_Layer: 0
+  m_Name: Polypeptide Sequence
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1027445834820768729
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4265432535112186709}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4545272566148289077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4265432535112186709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a72e54b13d84ba9abff43ae028eeb53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: particle.names
+    input:
+      value: []
+      isValueProvided: 0
+--- !u!114 &3963503906544500847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4265432535112186709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fb2bb5e9984368aaff39a10335ae4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: particle.residues
+    input:
+      value: 
+      isValueProvided: 0
+--- !u!114 &3464585695043242776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4265432535112186709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a72e54b13d84ba9abff43ae028eeb53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: residue.names
+    input:
+      value: []
+      isValueProvided: 0
+--- !u!114 &6936130919244846093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4265432535112186709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fb2bb5e9984368aaff39a10335ae4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: residue.chains
+    input:
+      value: 
+      isValueProvided: 0
+--- !u!114 &8089090521469392611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4265432535112186709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7af20ce70c19474cb0cabc1f8e7c5d12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 4545272566148289077}
+    sourceFieldName: input
+    destinationFieldName: atomNames
+  - sourceComponent: {fileID: 3963503906544500847}
+    sourceFieldName: input
+    destinationFieldName: atomResidues
+  - sourceComponent: {fileID: 3464585695043242776}
+    sourceFieldName: input
+    destinationFieldName: residueNames
+  - sourceComponent: {fileID: 6936130919244846093}
+    sourceFieldName: input
+    destinationFieldName: residueEntities
+  node:
+    atomNames:
+      value: []
+      isValueProvided: 0
+    atomResidues:
+      value: 
+      isValueProvided: 0
+    residueNames:
+      value: []
+      isValueProvided: 0
+    residueEntities:
+      value: 
+      isValueProvided: 0
+--- !u!114 &4659525984902923030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4265432535112186709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3d9c1f4f34948e8bb51530d262fbcb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 8089090521469392611}
+    sourceFieldName: alphaCarbonSequences
+    destinationFieldName: particleFilter
+  node:
+    parentAdaptor:
+      unityObject: {fileID: 0}
+      isValueProvided: 0
+    particleFilter:
+      value: 
+      isValueProvided: 0
+--- !u!114 &4119878278907132683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4265432535112186709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fd38095907d472cb38174f6effc0d24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 8089090521469392611}
+    sourceFieldName: sequenceLengths
+    destinationFieldName: output
+  node:
+    name: sequences.lengths
+    output:
+      value: 
+      isValueProvided: 0

@@ -1,0 +1,19 @@
+{
+    "name": "Nanover.Visualisation.Editor",
+    "references": [
+        "Nanover.Visualisation",
+        "Nanover.Core",
+        "Nanover.Frame"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": []
+}

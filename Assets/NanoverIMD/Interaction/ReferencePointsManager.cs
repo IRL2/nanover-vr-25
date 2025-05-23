@@ -11,7 +11,6 @@ using Nanover.Frontend.XR;
 
 using Text = TMPro.TextMeshProUGUI;
 using TMPro;
-using UnityEngine.UIElements;
 using Nanover.Frontend.Controllers;
 
 namespace NanoverImd.Interaction
@@ -27,6 +26,12 @@ namespace NanoverImd.Interaction
         [SerializeField]
         private Transform userPointer;
 
+        /// <summary>
+        /// Pointer object inside the simulation space. invisible
+        /// </summary>
+        [SerializeField]
+        private Transform userPointerTarget;
+
         [SerializeField]
         /// <summary> item in the hierarchy that will be used to parent for the added reference points</summary>
         private Transform simulationParent;
@@ -41,6 +46,8 @@ namespace NanoverImd.Interaction
         [SerializeField]
         private LineRenderer line;
 
+        float lineLength = 0.0f;
+
         private IButton secondaryButton;
         bool secondaryButtonPrevPressed = false;
 
@@ -54,6 +61,10 @@ namespace NanoverImd.Interaction
         bool grabButtonPrevPressed = false;
 
 
+        bool drawingMode = false;
+        
+        public float singlePointThreshold = 0.05f;
+
 
         private void Start()
         {
@@ -63,7 +74,11 @@ namespace NanoverImd.Interaction
             triggerButton = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.triggerButton);
             grabButton = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.gripButton);
 
+            RestartLine();
+
             UnityEngine.Debug.Log("This requires a user pointer in the hierarchy, a gameobject named 'Cursor', and a grandfather named 'Right Controller'");
+
+            //userPointerTarget.gameObject.GetComponentInChildren<Renderer>().enabled = false;
         }
 
         int pointCount = 0;
@@ -75,6 +90,14 @@ namespace NanoverImd.Interaction
 
         private void Update()
         {
+            //if (!frameSource.didStart)
+            //{
+            //    return;
+            //}
+            //else{
+            //    userPointerTarget.gameObject.GetComponentInChildren<Renderer>().enabled = true;
+            //}
+
             if (userPointer == null)
             {
                 GameObject.FindObjectsByType<ControllerPivot>(FindObjectsSortMode.None)
@@ -87,24 +110,43 @@ namespace NanoverImd.Interaction
                 return;
             }
 
-            label.text = "pointer at " + userPointer.transform.position.ToString();
+            userPointerTarget.position = userPointer.position;
 
+            label.text = "pointer at " + userPointerTarget.localPosition.ToString() + "\n";
+
+            if (lineLength > 0.0f)
+            {
+                label.text += "\nline";
+                label.text += "\n length " + lineLength.ToString("F2");
+                label.text += "\n points " + line.positionCount.ToString();
+                label.text += "\n origin " + line.GetPosition(0).ToString("F2");
+                label.text += "\n end " + line.GetPosition(line.positionCount - 1).ToString("F2") + "\n";
+            }
+
+            // dele the line
             if (secondaryButton.IsPressed)
             {
                 RestartLine();
+                lineLength = 0.0f;
                 return;
             }
 
+            // draw
             else if (primaryButton.IsPressed)
             {
                 label.text += "\nline contains " + line.positionCount + " points";
                 label.text += "\n[drawing]";
 
+                // first click, first point
                 if (!primaryButtonPrevPressed)
                 {
                     primaryButtonPrevPressed = true;
                     drawingElapsedTime = snapshotFrequency;
-                    RestartLine();
+
+                    userPointerTarget.gameObject.GetComponentInChildren<Renderer>().enabled = true;
+
+                    //RestartLine();
+                    // after a line is drawn, the user can add points by clicking the trigger button
                     AddReferencePoint(userPointer);
                 }
 
@@ -115,12 +157,13 @@ namespace NanoverImd.Interaction
                     AddReferencePoint(userPointer);
                 } else
                 {
-                     DragLastPointOnLine(userPointer);
+                    DragLastPointOnLine(userPointer);
                 }
             }
             else if (primaryButtonPrevPressed)
             {
                 line.Simplify(0.02f);
+                lineLength = GetLineLenght(line);
                 UnityEngine.Debug.Log("Finish drawing. Simplifiying the line");
             }
 
@@ -130,6 +173,27 @@ namespace NanoverImd.Interaction
             grabButtonPrevPressed = grabButton.IsPressed;
         }
 
+        /// <summary>
+        /// Returns the length of the line renderer by summing the distance between each point.
+        /// </summary>
+        /// <param name="l"></param>
+        /// <returns></returns>
+        float GetLineLenght(LineRenderer l)
+        {
+            float length = 0.0f;
+
+            for (int i = 0; i < l.positionCount - 1; i++)
+            {
+                length += Vector3.Distance(l.GetPosition(i), l.GetPosition(i + 1));
+            }
+
+            return length;
+        }
+
+
+        /// <summary>
+        /// Restarts the line by clearing all points and destroying the reference points.
+        /// </summary>
         private void RestartLine()
         {
             referencePoints.Clear();
@@ -148,8 +212,8 @@ namespace NanoverImd.Interaction
         {
             if (line.positionCount <= 1) return;
 
-            GameObject empty = new GameObject("Empty");
-            Transform newPosition = empty.transform;
+            //GameObject empty = new GameObject("Empty");
+            Transform newPosition = userPointerTarget.transform;
             newPosition.position = position.position;
 
             newPosition.position = userPointer.transform.position;
@@ -157,31 +221,38 @@ namespace NanoverImd.Interaction
 
             line.SetPosition(line.positionCount-1 , newPosition.transform.localPosition);
 
-            Destroy(empty);
+            //Destroy(empty);
         }
 
 
         private void AddReferencePoint(Transform position)
         {
-            //label.text = userPointer.transform.position.ToString();
-
-            GameObject empty = new GameObject("Empty");
-            Transform newPosition = empty.transform;
+            //GameObject empty = new GameObject("Empty");
+            Transform newPosition = userPointerTarget;
             newPosition.position = position.position;
 
             newPosition.position = userPointer.transform.position;
             newPosition.SetParent(simulationParent, true);
 
+            if (line.positionCount > 0)
+            {
+
+                if (Vector3.Distance(line.GetPosition(line.positionCount - 1), newPosition.localPosition) < singlePointThreshold)
+                {
+                    return;
+                }
+            }
+
             line.positionCount = line.positionCount + 1;
 
             line.SetPosition(line.positionCount - 1, newPosition.localPosition);
 
-            if (line.positionCount == 1)
-            {
-                line.SetPosition(0, newPosition.localPosition);
-            }
+            //if (line.positionCount == 1)
+            //{
+            //    line.SetPosition(0, newPosition.localPosition);
+            //}
 
-            Destroy(empty);
+            //Destroy(empty);
         }
 
 

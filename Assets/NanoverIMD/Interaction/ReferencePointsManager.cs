@@ -6,12 +6,16 @@ using Nanover.Visualisation;
 using NanoverImd;
 using UnityEngine;
 using UnityEngine.XR;
+//using UnityEngine.XR.Interaction.Toolkit;
+
 using Nanover.Frontend.Input;
 using Nanover.Frontend.XR;
 
 using Text = TMPro.TextMeshProUGUI;
 using TMPro;
 using Nanover.Frontend.Controllers;
+using System.Drawing;
+using UnityEngine.UIElements;
 
 namespace NanoverImd.Interaction
 {
@@ -47,6 +51,7 @@ namespace NanoverImd.Interaction
         private LineRenderer line;
 
         float lineLength = 0.0f;
+        double lineSmoothness = 0.0f;
 
         private IButton secondaryButton;
         bool secondaryButtonPrevPressed = false;
@@ -65,20 +70,21 @@ namespace NanoverImd.Interaction
         
         public float singlePointThreshold = 0.05f;
 
+        InputDevice rightHandDevice;
+        UnityEngine.XR.HapticCapabilities hapticCapabilities;
+
+
 
         private void Start()
         {
             primaryButton = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.primaryButton);
             secondaryButton = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.secondaryButton);
-
             triggerButton = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.triggerButton);
             grabButton = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.gripButton);
 
             RestartLine();
 
             UnityEngine.Debug.Log("This requires a user pointer in the hierarchy, a gameobject named 'Cursor', and a grandfather named 'Right Controller'");
-
-            //userPointerTarget.gameObject.GetComponentInChildren<Renderer>().enabled = false;
         }
 
         int pointCount = 0;
@@ -90,14 +96,6 @@ namespace NanoverImd.Interaction
 
         private void Update()
         {
-            //if (!frameSource.didStart)
-            //{
-            //    return;
-            //}
-            //else{
-            //    userPointerTarget.gameObject.GetComponentInChildren<Renderer>().enabled = true;
-            //}
-
             if (userPointer == null)
             {
                 GameObject.FindObjectsByType<ControllerPivot>(FindObjectsSortMode.None)
@@ -107,23 +105,51 @@ namespace NanoverImd.Interaction
                     .LastOrDefault(x => userPointer = x.transform);
 
                 UnityEngine.Debug.Log("User pointer found!");
+
+                rightHandDevice = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
+                rightHandDevice.TryGetHapticCapabilities(out hapticCapabilities);
+                if (!hapticCapabilities.supportsImpulse)
+                {
+                    UnityEngine.Debug.LogWarning("Right hand device does not support haptic impulses.");
+                }
+                else
+                {
+                    UnityEngine.Debug.Log("Right hand device supports haptic impulses.");
+                    rightHandDevice.SendHapticImpulse(0, .5f, .1f); // Test haptic feedback
+                }
+
+                userPointerTarget.gameObject.GetComponentInChildren<Renderer>().material.color = new UnityEngine.Color(1f, 1f, 1f, 0.1f);
+                userPointerTarget.gameObject.GetComponentInChildren<Renderer>().enabled = false;
+
+                
+
                 return;
             }
 
             userPointerTarget.position = userPointer.position;
 
-            label.text = "pointer at " + userPointerTarget.localPosition.ToString() + "\n";
+            label.text = "\npointer at " + userPointerTarget.localPosition.ToString() + " \n";
+
+            if (primaryButton.IsPressed)
+            {
+                label.text += "\n[drawing]";
+            } else
+            {
+                label.text += "\n";
+            }
 
             if (lineLength > 0.0f)
             {
-                label.text += "\nline";
-                label.text += "\n length " + lineLength.ToString("F2");
-                label.text += "\n points " + line.positionCount.ToString();
-                label.text += "\n origin " + line.GetPosition(0).ToString("F2");
-                label.text += "\n end " + line.GetPosition(line.positionCount - 1).ToString("F2") + "\n";
+                label.text += "\n<u>trajectory reference line</u>";
+                label.text += "\n   length is " + lineLength.ToString("F2") + " nm";
+                label.text += "\n   from " + line.GetPosition(0).ToString("F2");
+                label.text += "\n   to   " + line.GetPosition(line.positionCount - 1).ToString("F2");
+                label.text += "\n   having " + line.positionCount.ToString() + " points";
+                label.text += "\n   smooth index is " + (lineSmoothness/ line.positionCount).ToString("F2") + " *";
+                label.text += "\n";
             }
 
-            // dele the line
+            // delete the line
             if (secondaryButton.IsPressed)
             {
                 RestartLine();
@@ -134,8 +160,7 @@ namespace NanoverImd.Interaction
             // draw
             else if (primaryButton.IsPressed)
             {
-                label.text += "\nline contains " + line.positionCount + " points";
-                label.text += "\n[drawing]";
+                userPointerTarget.rotation = Quaternion.LookRotation(userPointer.transform.forward, userPointer.transform.up);
 
                 // first click, first point
                 if (!primaryButtonPrevPressed)
@@ -143,6 +168,7 @@ namespace NanoverImd.Interaction
                     primaryButtonPrevPressed = true;
                     drawingElapsedTime = snapshotFrequency;
 
+                    userPointerTarget.gameObject.GetComponentInChildren<Renderer>().material.color = new UnityEngine.Color(1f, 1f, 1f, 0.5f);
                     userPointerTarget.gameObject.GetComponentInChildren<Renderer>().enabled = true;
 
                     //RestartLine();
@@ -159,12 +185,17 @@ namespace NanoverImd.Interaction
                 {
                     DragLastPointOnLine(userPointer);
                 }
+
+                lineLength = GetLineLenght(line);
+                lineSmoothness = CalculateSmoothness(line);
             }
             else if (primaryButtonPrevPressed)
             {
                 line.Simplify(0.02f);
                 lineLength = GetLineLenght(line);
                 UnityEngine.Debug.Log("Finish drawing. Simplifiying the line");
+
+                userPointerTarget.gameObject.GetComponentInChildren<Renderer>().material.color = new UnityEngine.Color(1f,1f,1f, 0f);
             }
 
             primaryButtonPrevPressed = primaryButton.IsPressed;
@@ -192,6 +223,29 @@ namespace NanoverImd.Interaction
 
 
         /// <summary>
+        /// Calculates the smoothness of a line represented by a list of points.
+        public static float CalculateSmoothness(LineRenderer lineRenderer)
+        {
+            int pointCount = lineRenderer.positionCount;
+            if (pointCount < 3)
+                return 0f; // Not enough points to calculate second differences
+
+            Vector3[] positions = new Vector3[pointCount];
+            lineRenderer.GetPositions(positions);
+
+            float sum = 0f;
+
+            for (int i = 0; i < pointCount - 2; i++)
+            {
+                Vector3 secondDiff = positions[i + 2] - 2 * positions[i + 1] + positions[i];
+                sum += secondDiff.sqrMagnitude; // Squared length of the second derivative
+            }
+
+            return sum;
+        }
+
+
+        /// <summary>
         /// Restarts the line by clearing all points and destroying the reference points.
         /// </summary>
         private void RestartLine()
@@ -208,6 +262,8 @@ namespace NanoverImd.Interaction
             }
         }
     
+
+        // refactor this pls!
         private void DragLastPointOnLine(Transform position)
         {
             if (line.positionCount <= 1) return;
@@ -234,9 +290,16 @@ namespace NanoverImd.Interaction
             newPosition.position = userPointer.transform.position;
             newPosition.SetParent(simulationParent, true);
 
-            if (line.positionCount > 0)
+            if (line.positionCount == 2)
             {
+                if (Vector3.Distance(line.GetPosition(line.positionCount - 1), newPosition.localPosition) > singlePointThreshold)
+                {
+                    line.SetPosition(0, line.GetPosition(1));
+                }
+            }
 
+            if (line.positionCount >= 2)
+            {
                 if (Vector3.Distance(line.GetPosition(line.positionCount - 1), newPosition.localPosition) < singlePointThreshold)
                 {
                     return;
@@ -247,12 +310,7 @@ namespace NanoverImd.Interaction
 
             line.SetPosition(line.positionCount - 1, newPosition.localPosition);
 
-            //if (line.positionCount == 1)
-            //{
-            //    line.SetPosition(0, newPosition.localPosition);
-            //}
-
-            //Destroy(empty);
+            rightHandDevice.SendHapticImpulse(0u, 0.05f, 0.005f);
         }
 
 

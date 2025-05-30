@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,6 +16,7 @@ using TMPro;
 using Nanover.Frontend.Controllers;
 using System.Drawing;
 using UnityEngine.UIElements;
+using System.Reflection.Emit;
 
 namespace NanoverImd.Interaction
 {
@@ -41,17 +42,25 @@ namespace NanoverImd.Interaction
         private Transform simulationParent;
 
 
+        private Renderer pointerRenderer;
+
         [SerializeField]
         private GameObject referencePointPrefab;
 
         [SerializeField]
-        private TextMeshPro label;
+        private TextMeshPro lineInfoLabel;
+        [SerializeField]
+        private TextMeshPro lineModeInstructions;
+
+        const string DRAWING_DISABLED = "<b>Press [menu] to enable draw mode";
+        const string DRAWING_INSTRUCTIONS = "<b>Hold [A]</b> to draw a line\r\n<b>Press [A]</b> to add points to the line\r\n<b>Press [B]</b> to delete the line\r\n\r\n<b>Press [menu]</b> to disable drawing mode";
 
         [SerializeField]
         private LineRenderer line;
 
         float lineLength = 0.0f;
-        double lineSmoothness = 0.0f;
+        float lineSmoothnessA = 0.0f;
+        double lineSmoothnessB = 0.0f;
 
         private IButton secondaryButton;
         bool secondaryButtonPrevPressed = false;
@@ -65,14 +74,22 @@ namespace NanoverImd.Interaction
         private IButton grabButton;
         bool grabButtonPrevPressed = false;
 
+        private IButton menuButton;
+        bool menuButtonPrevPressed = false;
+        private IButton xButton;
+        bool xButtonPrevPressed = false;
+        private IButton yButton;
+        bool yButtonPrevPressed = false;
 
-        bool drawingMode = false;
-        
         public float singlePointThreshold = 0.05f;
 
         InputDevice rightHandDevice;
         UnityEngine.XR.HapticCapabilities hapticCapabilities;
 
+
+        bool modeActive = false;
+        bool modeDrawing = true;
+        bool modeTrailing = true;
 
 
         private void Start()
@@ -82,8 +99,15 @@ namespace NanoverImd.Interaction
             triggerButton = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.triggerButton);
             grabButton = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.gripButton);
 
+            menuButton = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.menuButton);
+            xButton = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.primaryButton);
+            yButton = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.secondary2DAxisClick);
+
             RestartLine();
 
+            lineInfoLabel.text = "";
+            lineModeInstructions.text = DRAWING_DISABLED;
+            pointerRenderer.enabled = false;
             UnityEngine.Debug.Log("This requires a user pointer in the hierarchy, a gameobject named 'Cursor', and a grandfather named 'Right Controller'");
         }
 
@@ -96,6 +120,48 @@ namespace NanoverImd.Interaction
 
         private void Update()
         {
+            if (menuButtonPrevPressed && !menuButton.IsPressed)
+            {
+                if (!modeActive)
+                {
+                    modeActive = true;
+                    pointerRenderer.enabled = true;
+                    line.enabled = true;
+                    pointerRenderer.material.color = new UnityEngine.Color(1f, 1f, 1f, 0.1f);
+                    lineModeInstructions.text = DRAWING_INSTRUCTIONS;
+                    UnityEngine.Debug.Log("Trajectory drawing mode activated");
+                }
+                else
+                {
+                    modeActive = false;
+                    line.enabled = false;
+                    pointerRenderer.enabled = false;
+                    lineInfoLabel.text = "";
+                    lineModeInstructions.text = DRAWING_DISABLED;
+                    UnityEngine.Debug.Log("Trajectory drawing mode deactivated");
+                }
+            }
+            
+            menuButtonPrevPressed = menuButton.IsPressed;
+
+            if (!modeActive) return;
+
+            // to do later
+            //if (xButton.IsPressed && !xButtonPrevPressed) 
+            //{ 
+            //    if (!modeTrailing)
+            //    {
+            //        modeTrailing = true;
+            //        UnityEngine.Debug.Log("Mode trailing active");
+            //    }
+            //    else
+            //    {
+            //        modeTrailing = false;
+            //        UnityEngine.Debug.Log("Mode trailing inactive");
+            //    }
+            //}
+
+            // setting up the pointer and haptics
             if (userPointer == null)
             {
                 GameObject.FindObjectsByType<ControllerPivot>(FindObjectsSortMode.None)
@@ -118,36 +184,32 @@ namespace NanoverImd.Interaction
                     rightHandDevice.SendHapticImpulse(0, .5f, .1f); // Test haptic feedback
                 }
 
-                userPointerTarget.gameObject.GetComponentInChildren<Renderer>().material.color = new UnityEngine.Color(1f, 1f, 1f, 0.1f);
-                userPointerTarget.gameObject.GetComponentInChildren<Renderer>().enabled = false;
-
-                
+                // setting the pointer
+                pointerRenderer = userPointerTarget.gameObject.GetComponentInChildren<Renderer>();
+                pointerRenderer.material.color = new UnityEngine.Color(1f, 1f, 1f, 0.1f);
+                pointerRenderer.enabled = false;
 
                 return;
             }
 
             userPointerTarget.position = userPointer.position;
 
-            label.text = "\npointer at " + userPointerTarget.localPosition.ToString() + " \n";
+            lineInfoLabel.text = "\npointer at " + userPointerTarget.localPosition.ToString() + " \n";
 
-            if (primaryButton.IsPressed)
-            {
-                label.text += "\n[drawing]";
-            } else
-            {
-                label.text += "\n";
-            }
 
             if (lineLength > 0.0f)
             {
-                label.text += "\n<u>trajectory reference line</u>";
-                label.text += "\n   length is " + lineLength.ToString("F2") + " nm";
-                label.text += "\n   from " + line.GetPosition(0).ToString("F2");
-                label.text += "\n   to   " + line.GetPosition(line.positionCount - 1).ToString("F2");
-                label.text += "\n   having " + line.positionCount.ToString() + " points";
-                label.text += "\n   smooth index is " + (lineSmoothness/ line.positionCount).ToString("F2") + " *";
-                label.text += "\n";
+                lineInfoLabel.text += "\n<u>trajectory reference line</u>" + (primaryButton.IsPressed ? " [drawing] " : "");
+                lineInfoLabel.text += "\n   length is " + lineLength.ToString("F2") + " nm";
+                lineInfoLabel.text += "\n   from " + line.GetPosition(0).ToString("F2");
+                lineInfoLabel.text += "\n   to " + line.GetPosition(line.positionCount - 1).ToString("F2");
+                lineInfoLabel.text += "\n   having " + line.positionCount.ToString() + " points";
+                lineInfoLabel.text += "\n   angular smooth index* is " + (lineSmoothnessA*100).ToString("F1") + "%";
+                lineInfoLabel.text += "\n   path jagger index** is " + lineSmoothnessB.ToString("F2");
+                lineInfoLabel.text += "\n";
             }
+
+            userPointerTarget.rotation = Quaternion.LookRotation(userPointer.transform.forward, userPointer.transform.up);
 
             // delete the line
             if (secondaryButton.IsPressed)
@@ -156,11 +218,9 @@ namespace NanoverImd.Interaction
                 lineLength = 0.0f;
                 return;
             }
-
             // draw
             else if (primaryButton.IsPressed)
             {
-                userPointerTarget.rotation = Quaternion.LookRotation(userPointer.transform.forward, userPointer.transform.up);
 
                 // first click, first point
                 if (!primaryButtonPrevPressed)
@@ -168,8 +228,7 @@ namespace NanoverImd.Interaction
                     primaryButtonPrevPressed = true;
                     drawingElapsedTime = snapshotFrequency;
 
-                    userPointerTarget.gameObject.GetComponentInChildren<Renderer>().material.color = new UnityEngine.Color(1f, 1f, 1f, 0.5f);
-                    userPointerTarget.gameObject.GetComponentInChildren<Renderer>().enabled = true;
+                    pointerRenderer.material.color = new UnityEngine.Color(1f, 1f, 1f, 0.5f);
 
                     //RestartLine();
                     // after a line is drawn, the user can add points by clicking the trigger button
@@ -181,27 +240,35 @@ namespace NanoverImd.Interaction
                 {
                     drawingElapsedTime = 0.0f;
                     AddReferencePoint(userPointer);
-                } else
+                }
+                else
                 {
                     DragLastPointOnLine(userPointer);
                 }
 
                 lineLength = GetLineLenght(line);
-                lineSmoothness = CalculateSmoothness(line);
+                lineSmoothnessA = CalculateAngularSmoothness(line) / Mathf.PI;
+                lineSmoothnessB = CalculateSmoothness(line);
             }
             else if (primaryButtonPrevPressed)
             {
-                line.Simplify(0.02f);
+                line.Simplify(0.01f);
                 lineLength = GetLineLenght(line);
-                UnityEngine.Debug.Log("Finish drawing. Simplifiying the line");
+                lineSmoothnessA = CalculateAngularSmoothness(line) / Mathf.PI;
+                lineSmoothnessB = CalculateSmoothness(line);
 
-                userPointerTarget.gameObject.GetComponentInChildren<Renderer>().material.color = new UnityEngine.Color(1f,1f,1f, 0f);
+                pointerRenderer.material.color = new UnityEngine.Color(1f, 1f, 1f, 0.1f);
+                UnityEngine.Debug.Log("Finish drawing. Simplifiying the line");
             }
+
 
             primaryButtonPrevPressed = primaryButton.IsPressed;
             secondaryButtonPrevPressed = secondaryButton.IsPressed;
             triggerButtonPrevPressed = triggerButton.IsPressed;
             grabButtonPrevPressed = grabButton.IsPressed;
+            menuButtonPrevPressed = menuButton.IsPressed;
+            xButtonPrevPressed = xButton.IsPressed;
+            yButtonPrevPressed = yButton.IsPressed;
         }
 
         /// <summary>
@@ -223,7 +290,9 @@ namespace NanoverImd.Interaction
 
 
         /// <summary>
-        /// Calculates the smoothness of a line represented by a list of points.
+        /// Calculates the smoothness of a line represented by a list of points
+        /// sums the squared second differences of the points. (squared length of the second derivative)
+        /// 
         public static float CalculateSmoothness(LineRenderer lineRenderer)
         {
             int pointCount = lineRenderer.positionCount;
@@ -237,11 +306,50 @@ namespace NanoverImd.Interaction
 
             for (int i = 0; i < pointCount - 2; i++)
             {
+                // v1 total variation of first derivatives
+                //Vector3 firstDiff = positions[i + 1] - positions[i];
+                //sum += firstDiff.magnitude;
+
+                // v2 discrete curvature = sum of squared second derivatives
                 Vector3 secondDiff = positions[i + 2] - 2 * positions[i + 1] + positions[i];
                 sum += secondDiff.sqrMagnitude; // Squared length of the second derivative
             }
 
             return sum;
+        }
+
+        // angle between triplets
+        public static float CalculateAngularSmoothness(LineRenderer lineRenderer)
+        {
+            int pointCount = lineRenderer.positionCount;
+            if (pointCount < 3)
+                return 0f; // Not enough segments to evaluate angles
+
+            Vector3[] positions = new Vector3[pointCount];
+            lineRenderer.GetPositions(positions);
+
+            float totalDeviation = 0f;
+            int angleCount = 0;
+
+            for (int i = 1; i < pointCount - 1; i++)
+            {
+                Vector3 prev = positions[i] - positions[i - 1];
+                Vector3 next = positions[i + 1] - positions[i];
+
+                if (prev.sqrMagnitude == 0f || next.sqrMagnitude == 0f)
+                    continue; // Skip degenerate segments
+
+                float dot = Vector3.Dot(prev.normalized, next.normalized);
+                dot = Mathf.Clamp(dot, -1f, 1f); // Clamp to avoid NaNs due to rounding
+
+                float angle = Mathf.Acos(dot); // In radians
+                float deviation = Mathf.Abs(Mathf.PI - angle); // π (180°) = perfectly straight
+
+                totalDeviation += deviation;
+                angleCount++;
+            }
+
+            return (angleCount > 0) ? totalDeviation / angleCount : 0f;
         }
 
 
@@ -254,14 +362,16 @@ namespace NanoverImd.Interaction
             workSnapshots.Clear();
             line.positionCount = 0;
             pointCount = 0;
-            
+            lineSmoothnessA = MathF.PI;
+            lineLength = 0.0f;
+
             GameObject[] gameObjects = GameObject.FindGameObjectsWithTag(tag: "ReferencePoints");
             foreach (GameObject g in gameObjects)
             {
                 Destroy(g);
             }
         }
-    
+
 
         // refactor this pls!
         private void DragLastPointOnLine(Transform position)
@@ -275,7 +385,7 @@ namespace NanoverImd.Interaction
             newPosition.position = userPointer.transform.position;
             newPosition.SetParent(simulationParent, true);
 
-            line.SetPosition(line.positionCount-1 , newPosition.transform.localPosition);
+            line.SetPosition(line.positionCount - 1, newPosition.transform.localPosition);
 
             //Destroy(empty);
         }
@@ -316,9 +426,9 @@ namespace NanoverImd.Interaction
 
         private void addReferencePointFromCursor()
         {
-            label.text = userPointer.transform.position.ToString();
+            lineInfoLabel.text = userPointer.transform.position.ToString();
 
-            GameObject g = Instantiate(referencePointPrefab, userPointer.transform.position, userPointer.transform.rotation);    
+            GameObject g = Instantiate(referencePointPrefab, userPointer.transform.position, userPointer.transform.rotation);
             g.transform.SetParent(simulationParent, true);
             g.transform.localScale = simulation.transform.localScale * 0.05f;
 
@@ -329,7 +439,8 @@ namespace NanoverImd.Interaction
             if (pointCount == 1)
             {
                 line.SetPosition(0, g.transform.localPosition);
-            } else
+            }
+            else
             {
                 g.transform.rotation = Quaternion.LookRotation(line.GetPosition(pointCount) - line.GetPosition(pointCount - 1));
             }
@@ -348,5 +459,3 @@ public static class ExtensionMethods
         return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
     }
 }
-
-

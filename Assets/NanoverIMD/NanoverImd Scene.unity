@@ -1269,7 +1269,8 @@ MonoBehaviour:
   simulationParent: {fileID: 92531328}
   referencePointPrefab: {fileID: 4003346033722457094, guid: d42d0494ccf522a44af4691bd8064f66,
     type: 3}
-  label: {fileID: 1715950571}
+  lineInfoLabel: {fileID: 1715950571}
+  lineModeInstructions: {fileID: 1295914818}
   line: {fileID: 1323659793}
   singlePointThreshold: 0.05
   snapshotFrequency: 0.01
@@ -3144,7 +3145,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.055999998, g: 0.055999998, b: 0.055999998, a: 0.89411765}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -3236,7 +3237,7 @@ MonoBehaviour:
   m_ImageStabilization: 0
   m_LightEstimation: 0
   m_FacingDirection: 1
-  m_RenderMode: 0
+  m_RenderMode: 2
 --- !u!114 &655857516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4818,7 +4819,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -4848,7 +4849,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 6.5227585, z: 0, w: 0}
+  m_margin: {x: 0.05, y: 5.4833, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -6691,7 +6692,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0.05, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0

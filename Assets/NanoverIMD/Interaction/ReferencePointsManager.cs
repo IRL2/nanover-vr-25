@@ -22,11 +22,14 @@ namespace NanoverImd.Interaction
 {
     public class ReferencePointsManager : MonoBehaviour
     {
-        [SerializeField]
-        private NanoverImdSimulation simulation;
+        //[SerializeField]
+        //private NanoverImdSimulation simulation;
+
+        //[SerializeField]
+        //private SynchronisedFrameSource frameSource;
 
         [SerializeField]
-        private SynchronisedFrameSource frameSource;
+        private LiveMotionTrails liveMotionTrails;
 
         [SerializeField]
         private Transform userPointer;
@@ -42,6 +45,9 @@ namespace NanoverImd.Interaction
         private Transform simulationParent;
 
 
+        [SerializeField]
+        private Transform destinationZone;
+
         private Renderer pointerRenderer;
 
         [SerializeField]
@@ -53,7 +59,7 @@ namespace NanoverImd.Interaction
         private TextMeshPro lineModeInstructions;
 
         const string DRAWING_DISABLED = "<b>Press [menu] to enable draw mode";
-        const string DRAWING_INSTRUCTIONS = "<b>Hold [A]</b> to draw a line\r\n<b>Press [A]</b> to add points to the line\r\n<b>Press [B]</b> to delete the line\r\n\r\n<b>Press [menu]</b> to disable drawing mode";
+        const string DRAWING_INSTRUCTIONS = "<b>Hold [A]</b> to draw a line\r\n<b>Press [A]</b> to add points to the line\r\n<b>Press [B]</b> to delete the line\r\n\r\n<b>Press [Y]</b> to reset trail\r\n<b>Press [X]</b> to position destiny\r\n\r\n<b>Press [menu]</b> to disable drawing mode";
 
         [SerializeField]
         private LineRenderer line;
@@ -101,17 +107,17 @@ namespace NanoverImd.Interaction
 
             menuButton = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.menuButton);
             xButton = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.primaryButton);
-            yButton = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.secondary2DAxisClick);
+            yButton = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.secondaryButton);
 
             RestartLine();
 
             lineInfoLabel.text = "";
             lineModeInstructions.text = DRAWING_DISABLED;
-            pointerRenderer.enabled = false;
+            //pointerRenderer.enabled = false;
             UnityEngine.Debug.Log("This requires a user pointer in the hierarchy, a gameobject named 'Cursor', and a grandfather named 'Right Controller'");
         }
 
-        int pointCount = 0;
+        //int pointCount = 0;
         private List<Vector3> referencePoints = new List<Vector3>();
         private List<float> workSnapshots = new List<float>();
 
@@ -135,7 +141,7 @@ namespace NanoverImd.Interaction
                 {
                     modeActive = false;
                     line.enabled = false;
-                    pointerRenderer.enabled = false;
+                    pointerRenderer.enabled = false;    
                     lineInfoLabel.text = "";
                     lineModeInstructions.text = DRAWING_DISABLED;
                     UnityEngine.Debug.Log("Trajectory drawing mode deactivated");
@@ -146,20 +152,11 @@ namespace NanoverImd.Interaction
 
             if (!modeActive) return;
 
-            // to do later
-            //if (xButton.IsPressed && !xButtonPrevPressed) 
-            //{ 
-            //    if (!modeTrailing)
-            //    {
-            //        modeTrailing = true;
-            //        UnityEngine.Debug.Log("Mode trailing active");
-            //    }
-            //    else
-            //    {
-            //        modeTrailing = false;
-            //        UnityEngine.Debug.Log("Mode trailing inactive");
-            //    }
-            //}
+            if (yButton.IsPressed && !yButtonPrevPressed)
+            {
+                liveMotionTrails.ResetLine();
+                //return;
+            }
 
             // setting up the pointer and haptics
             if (userPointer == null)
@@ -262,6 +259,14 @@ namespace NanoverImd.Interaction
             }
 
 
+            if (xButton.IsPressed)
+            {
+                destinationZone.localScale = simulationParent.localScale * 0.1f;
+                destinationZone.localPosition = userPointerTarget.localPosition;
+                destinationZone.localRotation = userPointerTarget.localRotation;
+            }
+
+
             primaryButtonPrevPressed = primaryButton.IsPressed;
             secondaryButtonPrevPressed = secondaryButton.IsPressed;
             triggerButtonPrevPressed = triggerButton.IsPressed;
@@ -361,7 +366,7 @@ namespace NanoverImd.Interaction
             referencePoints.Clear();
             workSnapshots.Clear();
             line.positionCount = 0;
-            pointCount = 0;
+            //pointCount = 0;
             lineSmoothnessA = MathF.PI;
             lineLength = 0.0f;
 
@@ -423,30 +428,6 @@ namespace NanoverImd.Interaction
             rightHandDevice.SendHapticImpulse(0u, 0.05f, 0.005f);
         }
 
-
-        private void addReferencePointFromCursor()
-        {
-            lineInfoLabel.text = userPointer.transform.position.ToString();
-
-            GameObject g = Instantiate(referencePointPrefab, userPointer.transform.position, userPointer.transform.rotation);
-            g.transform.SetParent(simulationParent, true);
-            g.transform.localScale = simulation.transform.localScale * 0.05f;
-
-            pointCount++;
-            line.positionCount = pointCount + 1;
-
-            line.SetPosition(pointCount, g.transform.localPosition);
-            if (pointCount == 1)
-            {
-                line.SetPosition(0, g.transform.localPosition);
-            }
-            else
-            {
-                g.transform.rotation = Quaternion.LookRotation(line.GetPosition(pointCount) - line.GetPosition(pointCount - 1));
-            }
-
-            Destroy(g);
-        }
     }
 
 }

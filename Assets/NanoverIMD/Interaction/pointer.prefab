@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6772810091635990398}
   - component: {fileID: 8757418817097351663}
   m_Layer: 0
-  m_Name: reference point prop
+  m_Name: pointer
   m_TagString: ReferencePoints
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

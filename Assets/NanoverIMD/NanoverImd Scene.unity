@@ -3782,7 +3782,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1549604112718095413, guid: 0cd382c4d470f174791dd96eb8f7b786, type: 2}
+  - {fileID: 2100000, guid: 7d7a84740d4ee8043ac397e5833cc828, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3803,8 +3803,7 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 1}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.01
@@ -3856,7 +3855,7 @@ LineRenderer:
     numCornerVertices: 5
     numCapVertices: 20
     alignment: 0
-    textureMode: 0
+    textureMode: 4
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
@@ -5265,6 +5264,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1323659792}
   - component: {fileID: 1323659793}
+  - component: {fileID: 1323659794}
   m_Layer: 0
   m_Name: Reference line
   m_TagString: Untagged
@@ -5315,7 +5315,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1549604112718095413, guid: 0cd382c4d470f174791dd96eb8f7b786, type: 2}
+  - {fileID: 2100000, guid: e11891685906c7e4da1c91c193e0887a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5339,13 +5339,13 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.01
+    widthMultiplier: 0.010091191
     widthCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.7442932
+        value: 1
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5357,8 +5357,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.76284564, g: 0.8090124, b: 0.8113208, a: 0.7058824}
-      key1: {r: 0.7851482, g: 0.7665835, b: 0.8553459, a: 0.7058824}
+      key0: {r: 0.78616345, g: 0.7391914, b: 0.7564145, a: 1}
+      key1: {r: 0.78616345, g: 0.7391914, b: 0.7564145, a: 1}
       key2: {r: 0.78616345, g: 0.7391914, b: 0.7564145, a: 0}
       key3: {r: 0.8304752, g: 0.8396226, b: 0.48713955, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -5366,7 +5366,7 @@ LineRenderer:
       key6: {r: 0, g: 0, b: 0, a: 0}
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
-      ctime1: 32768
+      ctime1: 65535
       ctime2: 65535
       ctime3: 65535
       ctime4: 0
@@ -5381,14 +5381,14 @@ LineRenderer:
       atime5: 0
       atime6: 0
       atime7: 0
-      m_Mode: 0
+      m_Mode: 1
       m_ColorSpace: 0
-      m_NumColorKeys: 3
+      m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 5
     numCapVertices: 20
     alignment: 0
-    textureMode: 2
+    textureMode: 1
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
@@ -5396,6 +5396,19 @@ LineRenderer:
   m_UseWorldSpace: 0
   m_Loop: 0
   m_ApplyActiveColorSpace: 0
+--- !u!114 &1323659794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1323659791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c2f4130bb339cf45a00245847f038b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: e11891685906c7e4da1c91c193e0887a, type: 2}
 --- !u!1 &1366930254
 GameObject:
   m_ObjectHideFlags: 0

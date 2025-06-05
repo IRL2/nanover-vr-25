@@ -149,14 +149,15 @@ namespace NanoverImd.Interaction
             }
             
             menuButtonPrevPressed = menuButton.IsPressed;
-
-            if (!modeActive) return;
+            yButtonPrevPressed = yButton.IsPressed;
 
             if (yButton.IsPressed && !yButtonPrevPressed)
             {
                 liveMotionTrails.ResetLine();
-                //return;
             }
+
+            if (!modeActive) return;
+
 
             // setting up the pointer and haptics
             if (userPointer == null)
@@ -197,12 +198,12 @@ namespace NanoverImd.Interaction
             if (lineLength > 0.0f)
             {
                 lineInfoLabel.text += "\n<u>trajectory reference line</u>" + (primaryButton.IsPressed ? " [drawing] " : "");
-                lineInfoLabel.text += "\n   length is " + lineLength.ToString("F2") + " nm";
+                lineInfoLabel.text += "\n   lenght is " + lineLength.ToString("F2") + " nm";
                 lineInfoLabel.text += "\n   from " + line.GetPosition(0).ToString("F2");
                 lineInfoLabel.text += "\n   to " + line.GetPosition(line.positionCount - 1).ToString("F2");
                 lineInfoLabel.text += "\n   having " + line.positionCount.ToString() + " points";
-                lineInfoLabel.text += "\n   angular smooth index* is " + (lineSmoothnessA*100).ToString("F1") + "%";
-                lineInfoLabel.text += "\n   path jagger index** is " + lineSmoothnessB.ToString("F2");
+                lineInfoLabel.text += "\n   angular triplets " + (lineSmoothnessA*100).ToString("F1") + "%";
+                lineInfoLabel.text += "\n   path jagger " + lineSmoothnessB.ToString("F2");
                 lineInfoLabel.text += "\n";
             }
 

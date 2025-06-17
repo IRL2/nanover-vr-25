@@ -108,7 +108,6 @@ fout frag (v2f i)
     float3 c = _WorldSpaceCameraPos.xyz;
     
     o.color = DIFFUSE(i.color, n, l, _Diffuse);
-    o.color.a = 1.0;
     OUTPUT_FRAG_DEPTH(o, c + d * t);
     return o;
 }

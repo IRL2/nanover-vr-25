@@ -155,7 +155,6 @@ fout frag (v2f i)
     float4 color = lerp(i.color1, i.color2, lerpt);
     
     o.color = DIFFUSE(color, n, l, _Diffuse);
-    o.color.a = 1.0;
     
     OUTPUT_FRAG_DEPTH(o, c + d * t);
     return o;

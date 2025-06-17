@@ -217,6 +217,7 @@ Shader "NanoverIMD/Opaque/Hyperballs"
                 bias = clamp((lerp(pow(bias, log(0.5) / log(cutoff)), 1 - pow(1 - bias, log(0.5) / log(1-cutoff)), step(cutoff, 0.5)) - 0.5) / ((1-_EdgeSharpness) + 0.0001) + 0.5, 0, 1);
     
                 o.color = DIFFUSE(lerp(i.color1, i.color2, bias), n, l, _Diffuse);
+                o.color.a = 1.0;
                 
                 OUTPUT_FRAG_DEPTH(o, p + d * t);
                 return o;

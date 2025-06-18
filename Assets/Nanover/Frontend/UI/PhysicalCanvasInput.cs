@@ -58,9 +58,9 @@ namespace Nanover.Frontend.UI
         {
             var trigger = inputSource.WrapUsageAsButton(CommonUsages.triggerButton);
 
-            WorldSpaceCursorInput.SetCanvasAndCursor(canvas,
-                                                     Controller.CursorPose,
-                                                     trigger);
+            //WorldSpaceCursorInput.SetCanvasAndCursor(canvas,
+                                                     //Controller.CursorPose,
+                                                     //trigger);
             controllers.SetDominantHand(inputSource);
         }
 

@@ -49,6 +49,33 @@ namespace NanoverImd
             simulation.ConnectionEstablished += connectionEstablished.Invoke;
         }
 
+        private void Start()
+        {
+            TestAutoConnect();
+        }
+
+        public async void TestAutoConnect()
+        {
+            debugLabel.text = "WAIT...";
+
+            await Task.Delay(1000);
+
+            debugLabel.text = "CONNECT...";
+
+            try
+            {
+                await simulation.AutoConnect();
+                debugLabel.text = "CONNECTED?";
+            }
+            catch (System.Exception e)
+            {
+                debugLabel.text = e.Message;
+            }
+        }
+
+        [SerializeField]
+        private TMPro.TextMeshProUGUI debugLabel;
+
         /// <summary>
         /// Connect to remote Nanover services.
         /// </summary>

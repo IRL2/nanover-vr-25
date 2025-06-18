@@ -8,7 +8,7 @@
       "hash": "0eede4bf5bbbf7d6eb9cb63739c05bd69a6beaba"
     },
     "com.meta.xr.sdk.core": {
-      "version": "76.0.1",
+      "version": "77.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},

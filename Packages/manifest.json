@@ -2,6 +2,7 @@
   "dependencies": {
     "com.alexjbinnie.codecoveragetools": "https://gitlab.com/alexjbinnie/code-coverage-tools.git",
     "com.cysharp.yetanotherhttphandler": "https://github.com/Cysharp/YetAnotherHttpHandler.git?path=/src/YetAnotherHttpHandler#1.2.0",
+    "com.meta.xr.sdk.interaction": "77.0.0",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.device-simulator.devices": "1.0.0",
     "com.unity.ext.nunit": "2.0.5",

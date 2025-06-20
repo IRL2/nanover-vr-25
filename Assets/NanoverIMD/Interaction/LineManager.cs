@@ -11,8 +11,8 @@ public class LineManager : MonoBehaviour
     public const int SOLID_LINE = 0;
     public const int DASH_LINE = 1;
 
-    private readonly List<LineRenderer> lines = new();
-    private readonly List<List<Vector3>> linePoints = new();
+    private readonly List<LineRenderer> lines = new();       // Stores LineRenderer components for each line
+    private readonly List<List<Vector3>> linePoints = new(); // Stores points for each line
 
     public int CreateNewLine(int? type = SOLID_LINE)
     {
@@ -46,7 +46,22 @@ public class LineManager : MonoBehaviour
         lines[lineIndex].positionCount = 0;
     }
 
-    public void RemoveAllLines()
+    public void RemoveLine(int lineIndex)
+    {
+        if (lines[lineIndex] == null)
+        {
+            Debug.LogWarning($"Line at index {lineIndex} is null, cannot remove.");
+            return;
+        }
+        if (lines[lineIndex] != null && lines[lineIndex].gameObject != null)
+        {
+            Destroy(lines[lineIndex].gameObject);
+        }
+        lines.RemoveAt(lineIndex);
+        linePoints.RemoveAt(lineIndex);
+    }
+
+    public void RemoveAllLinesxx()
     {
         foreach (var line in lines)
             Destroy(line.gameObject);
@@ -113,5 +128,23 @@ public class LineManager : MonoBehaviour
         if (lineIndex < 0 || lineIndex >= lines.Count) return;
         lines[lineIndex].startColor = color;
         lines[lineIndex].endColor = color;
+    }
+
+    public void ScaleLineWeight(int lineIndex, float scale)
+    {
+        if (lineIndex < 0 || lineIndex >= lines.Count) return;
+        lines[lineIndex].startWidth *= scale;
+        lines[lineIndex].endWidth *= scale;
+    }
+
+    public void SimplifyLine(int lineIndex, float? tolerance = 0.001f)
+    {
+        if (lineIndex < 0 || lineIndex >= lines.Count) return;
+        lines[lineIndex].Simplify((float)tolerance);
+
+        //var simplifiedPoints = DouglasPeucker(linePoints[lineIndex], tolerance);
+        //linePoints[lineIndex] = simplifiedPoints;
+        //lines[lineIndex].positionCount = simplifiedPoints.Count;
+        //lines[lineIndex].SetPositions(simplifiedPoints.ToArray());
     }
 }

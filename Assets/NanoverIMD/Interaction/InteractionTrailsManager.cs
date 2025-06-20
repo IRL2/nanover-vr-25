@@ -24,6 +24,7 @@ public class InteractionTrailsManager : MonoBehaviour
     private Vector3? lastPosition = Vector3.zero;
     private float? lastWork = 0.0f;
     private float deltaWork = 0.0f;
+
     private List<float> workSnapshots = new();
     private bool hasHaptics = false;
     private UnityEngine.XR.InputDevice rightHandDevice;
@@ -32,12 +33,10 @@ public class InteractionTrailsManager : MonoBehaviour
     private Nanover.Frontend.Input.IButton yButton;
     private bool yButtonPrevPressed = false;
 
-    private float[] colorPalette = new float[]
-    {
-        0.55f, 0.58f, 0.60f, 0.88f, 0.90f, 0.92f, 0.95f, 0.97f, 0.99f
-    };
-    private int currentColorIndex = 0;
     private float currentColorHue = 0.5f;
+
+    // Add this field to store all created line indices
+    private List<int> createdLineIndices = new();
 
     void Start()
     {
@@ -65,12 +64,13 @@ public class InteractionTrailsManager : MonoBehaviour
 
         if (yButton.IsPressed && !yButtonPrevPressed)
         {
-            // Reset the current line and work snapshots
-            if (currentLineIndex >= 0)
+            // remove the last line
+            if (createdLineIndices.Count > 0)
             {
-                lineManager.ResetLine(currentLineIndex);
-                currentLineIndex = Mathf.Max(currentLineIndex--, 0);
-                lastFrameIndex = 0.0f;
+                Debug.Log($"Removing interaction trail line {currentLineIndex} out of #{createdLineIndices.Count}");
+                lineManager.RemoveLine(currentLineIndex);
+                createdLineIndices.RemoveAt(createdLineIndices.Count - 1);
+                currentLineIndex = createdLineIndices.Count > 0 ? createdLineIndices.Count - 1 : -1;
             }
             UpdateInfo();
         }
@@ -104,14 +104,19 @@ public class InteractionTrailsManager : MonoBehaviour
             if (frameIndex == null) return;
 
             // Start a new line if needed (e.g., on new interaction)
-            if (currentLineIndex == -1 || frameIndex - lastFrameIndex > 0.9f)
+            if (currentLineIndex == -1 || frameIndex - lastFrameIndex > 0.3f)
             {
                 Debug.Log($" started a new line at frame ${lastFrameIndex}");
+                //lineManager.SimplifyLine(currentLineIndex, 0.001f);
 
                 currentLineIndex = lineManager.CreateNewLine(LineManager.SOLID_LINE);
+
+                // Save the new line index
+                createdLineIndices.Add(currentLineIndex);
+
                 currentColorHue = (currentColorHue + 0.1f) % 1.0f;
                 lineManager.SetLineColor(currentLineIndex,
-                                         Color.HSVToRGB(currentColorHue, 0.85f, 0.75f));
+                                         Color.HSVToRGB(currentColorHue, 0.85f, 0.85f));
             }
 
             lastFrameIndex = frameIndex;

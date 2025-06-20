@@ -1326,9 +1326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lineManager: {fileID: 1412789820}
-  userPointer: {fileID: 5694909677057458628, guid: d42d0494ccf522a44af4691bd8064f66,
-    type: 3}
-  userPointerTarget: {fileID: 1562997908}
+  referenceProp: {fileID: 1562997908}
   simulationParent: {fileID: 92531328}
   destinationZone: {fileID: 1170982371}
   lineInfoLabel: {fileID: 1715950571}
@@ -1406,14 +1404,14 @@ MonoBehaviour:
 
     <b>Press [B]</b> to delete the line
 
-    
+
 
     <b>Press
     [Y]</b> to reset trail
 
     <b>Press [X]</b> to position destiny
 
-    
+
 
     <b>Press
     [menu]</b> to disable drawing mode'

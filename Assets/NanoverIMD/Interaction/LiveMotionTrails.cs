@@ -137,7 +137,7 @@ public class LiveMotionTrails : MonoBehaviour
     {
         if (!hasHaptics)
         {
-            rightHandDevice = InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
+            rightHandDevice = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
             rightHandDevice.TryGetHapticCapabilities(out hapticCapabilities);
             if (!hapticCapabilities.supportsImpulse)
             {

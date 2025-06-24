@@ -46,7 +46,7 @@ namespace Nanover.Frontend.UI
 
         public static void ClearSelection()
         {
-            (EventSystem.current.currentInputModule as NanoverInputModule).ClearSelection();
+            //(EventSystem.current.currentInputModule as NanoverInputModule).ClearSelection();
         }
 
         private void Update()
@@ -156,13 +156,13 @@ namespace Nanover.Frontend.UI
         
         public static void TriggerClick()
         {
-            var hovered = (EventSystem.current.currentInputModule as NanoverInputModule)
-                .CurrentHoverTarget;
-            if (hovered != null)
-            {
-                ExecuteEvents.ExecuteHierarchy(hovered, new BaseEventData(EventSystem.current),
-                                               ExecuteEvents.submitHandler);
-            }
+            //var hovered = (EventSystem.current.currentInputModule as NanoverInputModule)
+            //    .CurrentHoverTarget;
+            //if (hovered != null)
+            //{
+            //    ExecuteEvents.ExecuteHierarchy(hovered, new BaseEventData(EventSystem.current),
+            //                                   ExecuteEvents.submitHandler);
+            //}
         }
     }
 }

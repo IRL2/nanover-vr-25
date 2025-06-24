@@ -42,7 +42,8 @@ namespace Nanover.Frontend.Controllers
 
             if (device.isValid && device.name != prevType)
             {
-                OnControllerTypeChanged(device.name, device);
+                //OnControllerTypeChanged(device.name, device);
+                OnControllerTypeChanged("null", device);
                 prevType = device.name;
             }
         }

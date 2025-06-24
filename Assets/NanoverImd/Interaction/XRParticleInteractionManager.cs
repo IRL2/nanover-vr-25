@@ -93,6 +93,17 @@ namespace NanoverImd.Interaction
             button = characteristics.WrapUsageAsButton(CommonUsages.triggerButton, () => controllerManager.CurrentInputMode == targetMode);
             button.Pressed += manipulator.AttemptManipulation;
             button.Released += manipulator.EndActiveManipulation;
+
+            var b = button;
+            toolPoser.PoseChanged += () =>
+            {
+                var targetting = (controllerManager.CurrentInputMode == targetMode);
+                var unpressed = (!b.IsPressed);
+
+                if (targetting && unpressed && toolPoser.Pose is { } pose)
+                    simulation.ManipulableParticles.HoverParticleGrab(pose.AsUnitTransformWithoutScale());
+            };
+
         }
 
         private IActiveManipulation AttemptGrabObject(UnitScaleTransformation grabberPose)

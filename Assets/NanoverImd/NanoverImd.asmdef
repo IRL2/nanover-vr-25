@@ -8,7 +8,7 @@
         "Nanover.Grpc",
         "Nanover.Frame",
         "Nanover.Core",
-        "SteamVRStub"
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

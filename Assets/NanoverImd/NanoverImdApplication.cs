@@ -8,8 +8,6 @@ using Nanover.Core.Math;
 using UnityEngine.XR;
 using System.Collections.Generic;
 using Nanover.Grpc.Multiplayer;
-using Nanover.Frontend.Controllers;
-using Nanover.Visualisation.Properties.Collections;
 
 namespace NanoverImd
 {
@@ -24,6 +22,18 @@ namespace NanoverImd
         
         [SerializeField]
         private NanoverImdSimulation simulation;
+
+        [Header("Passthrough")]
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float passthrough = 1f;
+
+        [SerializeField]
+        private new Camera camera;
+
+        [Header("Events")]
+        [SerializeField]
+        private UnityEvent connectionEstablished;
 #pragma warning restore 0649
 
         public NanoverImdSimulation Simulation => simulation;
@@ -40,9 +50,6 @@ namespace NanoverImd
         public ManipulableScenePose ManipulableSimulationSpace { get; private set; }
 
         public PhysicallyCalibratedSpace CalibratedSpace { get; } = new PhysicallyCalibratedSpace();
-
-        [SerializeField]
-        private UnityEvent connectionEstablished;
 
         private void Awake()
         {
@@ -97,7 +104,36 @@ namespace NanoverImd
                 CalibrateFromRemote();
             }
 
+            UpdateSuggestedParameters();
+
             UpdatePlayArea();
+
+            // update passthrough
+            var color = camera.backgroundColor;
+            color.a = 1f - passthrough;
+            camera.backgroundColor = color;
+        }
+
+        private void UpdateSuggestedParameters()
+        {
+            const string scaleKey = "suggested.interaction.scale";
+            const string typeKey = "suggested.interaction.type";
+            const string passthroughKey = "suggested.passthrough";
+
+            if (simulation.Multiplayer.GetSharedState(scaleKey) is double scale)
+            {
+                simulation.ManipulableParticles.ForceScale = (float)scale;
+            }
+
+            if (simulation.Multiplayer.GetSharedState(typeKey) is string type)
+            {
+                simulation.ManipulableParticles.ForceType = type;
+            }
+
+            if (simulation.Multiplayer.GetSharedState(passthroughKey) is double value)
+            {
+                passthrough = (float) value;
+            }
         }
 
         private Vector3 playareaSize = Vector3.zero;
@@ -147,7 +183,7 @@ namespace NanoverImd
             ManualColocation = true;
 
             var hand = InputDeviceCharacteristics.Right;
-            var button = hand.WrapUsageAsButton(CommonUsages.triggerButton);
+            var button = hand.WrapUsageAsButton(UnityEngine.XR.CommonUsages.triggerButton);
             button.Pressed += OnPressed;
 
             void OnPressed()

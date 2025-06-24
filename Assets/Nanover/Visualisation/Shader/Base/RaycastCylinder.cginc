@@ -175,7 +175,6 @@ fout frag (v2f i)
     
     lerpt = clamp((lerpt - 0.5) / (_GradientWidth + 0.0001) + 0.5, 0, 1);
     o.color = DIFFUSE(lerp(i.color1, i.color2, lerpt), n, l, _Diffuse);
-    
     OUTPUT_FRAG_DEPTH(o, c + d * t);
     return o;
 }

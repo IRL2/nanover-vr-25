@@ -24,3 +24,25 @@ MonoBehaviour:
     color: {r: 0.9433962, g: 0.16464934, b: 0.42588678, a: 1}
   - atomicNumber: 16
     color: {r: 0.9811321, g: 0.719641, b: 0, a: 1}
+  - atomicNumber: 2
+    color: {r: 0.8509804, g: 1, b: 1, a: 1}
+  - atomicNumber: 3
+    color: {r: 0.8, g: 0.5019608, b: 1, a: 1}
+  - atomicNumber: 4
+    color: {r: 0.7607843, g: 1, b: 0, a: 1}
+  - atomicNumber: 5
+    color: {r: 1, g: 0.70980394, b: 0.70980394, a: 1}
+  - atomicNumber: 9
+    color: {r: 0.5647059, g: 0.8784314, b: 0.3137255, a: 1}
+  - atomicNumber: 11
+    color: {r: 0.67058825, g: 0.36078432, b: 0.9490196, a: 1}
+  - atomicNumber: 17
+    color: {r: 0.12156863, g: 0.9411765, b: 0.12156863, a: 1}
+  - atomicNumber: 19
+    color: {r: 0.56078434, g: 0.2509804, b: 0.83137256, a: 1}
+  - atomicNumber: 29
+    color: {r: 0.7843138, g: 0.5019608, b: 0.20000002, a: 1}
+  - atomicNumber: 78
+    color: {r: 0.81568635, g: 0.81568635, b: 0.87843144, a: 1}
+  - atomicNumber: 27
+    color: {r: 0.9411765, g: 0.5647059, b: 0.627451, a: 1}

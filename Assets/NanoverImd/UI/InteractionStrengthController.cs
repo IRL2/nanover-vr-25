@@ -18,8 +18,8 @@ public class InteractionStrengthController : MonoBehaviour
     [SerializeField]
     private float minimumInteractionStrength;
 
-    [SerializeField]
-    private float scaling;
+    private float scaleTick;
+    private float scaleTime;
 
     private void Update()
     {
@@ -27,20 +27,23 @@ public class InteractionStrengthController : MonoBehaviour
 
         var increase = joystick.x > .5f;
         var decrease = joystick.x < -.5f;
+        var isScaling = increase || decrease;
 
-        var change = 0f;
-        if (increase)
-            change++;
-        if (decrease)
-            change--;
-        if (change != 0)
-        {
-            change = Mathf.Pow(scaling, change * Time.deltaTime);
-            Scale = Mathf.Clamp(Scale * change,
-                                minimumInteractionStrength,
-                                maximumInteractionStrength);
+        scaleTime = isScaling ? scaleTime + Time.deltaTime : 0;
+        scaleTick = isScaling ? scaleTick + Time.deltaTime : 0;
+
+        var sign = isScaling ? Mathf.Sign(joystick.x) : 0;
+        var change = sign * 1;
+
+        if (scaleTick > .1f) {
+            change *= Mathf.Pow(2, Mathf.FloorToInt(scaleTime));
+
+            Scale = (int) Mathf.Clamp(Scale + change,
+                                      minimumInteractionStrength,
+                                      maximumInteractionStrength);
 
             controller.PushNotification($"{(int) Scale}x");
+            scaleTick -= .1f;
         }
     }
 

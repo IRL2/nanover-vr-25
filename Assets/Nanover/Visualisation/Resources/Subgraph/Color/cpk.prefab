@@ -27,12 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8528582866378757822}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-4052931970267063914
 MonoBehaviour:
@@ -68,7 +69,7 @@ MonoBehaviour:
   node:
     name: scheme
     input:
-      unityObject: {fileID: 11400000, guid: f1a9c849f018f42adbab12e856c0da60, type: 2}
+      unityObject: {fileID: 11400000, guid: d9246a3960e1df3438615b81ea1b394e, type: 2}
       isValueProvided: 1
 --- !u!114 &8528582866378757810
 MonoBehaviour:

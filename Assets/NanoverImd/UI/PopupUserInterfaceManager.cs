@@ -42,13 +42,19 @@ namespace NanoverImd.UI
             {
                 while (true)
                 {
-                    var joystick = characteristics.GetFirstDevice().GetJoystickValue(CommonUsages.primary2DAxis) ?? Vector2.zero;
-                    var pressed = Mathf.Abs(joystick.y) > .5f;
+                    try
+                    {
+                        var joystick = characteristics.GetFirstDevice().GetJoystickValue(CommonUsages.primary2DAxis) ?? Vector2.zero;
+                        var pressed = Mathf.Abs(joystick.y) > .5f;
 
-                    if (pressed && !openMenu.IsPressed)
-                        openMenu.Press();
-                    else if (!pressed && openMenu.IsPressed)
-                        openMenu.Release();
+                        if (pressed && !openMenu.IsPressed)
+                            openMenu.Press();
+                        else if (!pressed && openMenu.IsPressed)
+                            openMenu.Release();
+                    } catch (System.Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
 
                     await Task.Delay(1);
                 }
@@ -66,11 +72,7 @@ namespace NanoverImd.UI
             GotoScene(menuPrefab);
             
             SceneUI.transform.position = SceneUI.GetComponent<PhysicalCanvasInput>()
-                                                .Controller
-                                                .HeadPose
-                                                .Pose
-                                                .Value
-                                                .Position;
+                                                .Controller.transform.position;
             SceneUI.transform.rotation =
                 Quaternion.LookRotation(SceneUI.transform.position - Camera.main.transform.position,
                                         Vector3.up);

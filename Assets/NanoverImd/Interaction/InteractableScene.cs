@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Nanover.Core.Math;
+using Nanover.Frontend.Controllers;
 using Nanover.Frontend.Manipulation;
 using Nanover.Visualisation;
 using Nanover.Visualisation.Properties;
@@ -8,6 +10,7 @@ using Nanover.Visualisation.Property;
 using NanoverImd;
 using NanoverImd.Selection;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace NanoverImd.Interaction
 {
@@ -27,6 +30,9 @@ namespace NanoverImd.Interaction
         [SerializeField]
         private NanoverImdSimulation simulation;
 
+        [SerializeField]
+        private VrController controller;
+
         public enum InteractionTarget
         {
             Single,
@@ -44,15 +50,25 @@ namespace NanoverImd.Interaction
         public void SetInteractionTargetSingle()
         {
             SetInteractionTarget(InteractionTarget.Single);
+            controller.PushNotification($"Target: Single");
         }
         
         public void SetInteractionTargetResidue()
         {
             SetInteractionTarget(InteractionTarget.Residue);
+            controller.PushNotification($"Target: Residue");
+        }
+
+        public void SetForceType(string type)
+        {
+            simulation.ManipulableParticles.ForceType = type;
+            controller.PushNotification($"Force: {type}");
         }
 
         /// <inheritdoc cref="InteractedParticles"/>
         private readonly IntArrayProperty interactedParticles = new IntArrayProperty();
+
+        private HashSet<int> hoveredParticles = new HashSet<int>();
 
         /// <summary>
         /// The set of particles which are currently being interacted with.
@@ -62,10 +78,20 @@ namespace NanoverImd.Interaction
         private void Update()
         {
             var interactions = simulation.Interactions;
-            var pts = new List<int>();
+            var pts = new HashSet<int>();
             foreach (var interaction in interactions.Values)
-                pts.AddRange(interaction.Particles);
+                pts.UnionWith(interaction.Particles);
+
+            pts.UnionWith(hoveredParticles);
+            hoveredParticles.Clear();
+
             interactedParticles.Value = pts.ToArray();
+        }
+
+        public void HoverParticleGrab(Transformation grabberPose)
+        {
+            if (GetNearestParticleIndex(grabberPose) is { } particleIndex)
+                hoveredParticles.UnionWith(GetInteractionIndices(particleIndex));
         }
 
         /// <summary>
@@ -74,7 +100,7 @@ namespace NanoverImd.Interaction
         /// <param name="grabberPose">The transformation of the grabbing pivot.</param>
         public ActiveParticleGrab GetParticleGrab(Transformation grabberPose)
         {
-            var particleIndex = GetClosestParticleToWorldPosition(grabberPose.Position);
+            var particleIndex = GetNearestParticleIndex(grabberPose);
 
             if (!particleIndex.HasValue)
                 return null;
@@ -86,6 +112,19 @@ namespace NanoverImd.Interaction
             if (selection.Selection.ResetVelocities)
                 grab.ResetVelocities = true;
             return grab;
+        }
+
+        private int? GetNearestParticleIndex(Transformation grabberPose)
+        {
+            var scale = 1f / Mathf.Abs(transform.lossyScale.x);
+
+            var particleIndex = GetClosestParticleToWorldPosition(
+                grabberPose.Position,
+                cutoff: scale * .25f,
+                includeHydrogens: interactionTarget == InteractionTarget.Residue
+            );
+
+            return particleIndex;
         }
 
         private IEnumerable<int> GetInteractionIndices(int particleIndex)
@@ -138,13 +177,13 @@ namespace NanoverImd.Interaction
         /// <summary>
         /// Get the closest particle to a given point in world space.
         /// </summary>
-        private int? GetClosestParticleToWorldPosition(Vector3 worldPosition, float cutoff = Mathf.Infinity)
+        private int? GetClosestParticleToWorldPosition(Vector3 worldPosition, float cutoff = Mathf.Infinity, bool includeHydrogens = false)
         {
             var position = transform.InverseTransformPoint(worldPosition);
 
             var frame = frameSource.CurrentFrame;
 
-            if (frame == null)
+            if (frame?.ParticlePositions == null)
                 return null;
 
             var bestSqrDistance = cutoff * cutoff;
@@ -156,9 +195,10 @@ namespace NanoverImd.Interaction
                 var sqrDistance = Vector3.SqrMagnitude(position - particlePosition);
 
                 var selection = visualisationScene.GetSelectionForParticle(i);
-                var interactable = (selection.Selection.InteractionMethod != ParticleSelection.InteractionMethodNone);
+                var isHydrogen = (frame.ParticleElements[i] == Nanover.Core.Science.Element.Hydrogen);
+                var isInteractable = (selection.Selection.InteractionMethod != ParticleSelection.InteractionMethodNone) && (includeHydrogens || !isHydrogen);
 
-                if (interactable && sqrDistance < bestSqrDistance)
+                if (isInteractable && sqrDistance < bestSqrDistance)
                 {
                     bestSqrDistance = sqrDistance;
                     bestParticleIndex = i;

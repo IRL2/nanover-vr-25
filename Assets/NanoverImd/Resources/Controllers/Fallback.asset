@@ -14,10 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controllerIdRegex: null
   leftController:
-    prefab: {fileID: 6054607360830509457, guid: 273de8ffe15e34c4081f7af86e3a4de7,
-      type: 3}
+    prefab: {fileID: 6054607360830509457, guid: 5ce74858da214d94f9e2a1573ebb71b0, type: 3}
     hideSteamVrModel: 1
   rightController:
-    prefab: {fileID: 6054607360830509457, guid: 273de8ffe15e34c4081f7af86e3a4de7,
-      type: 3}
+    prefab: {fileID: 6054607360830509457, guid: 5ce74858da214d94f9e2a1573ebb71b0, type: 3}
     hideSteamVrModel: 1

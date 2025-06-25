@@ -23,6 +23,12 @@ namespace NanoverImd
         [SerializeField]
         private NanoverImdSimulation simulation;
 
+        [SerializeField]
+        private GameObject boxInteraction;
+
+        [SerializeField]
+        private GameObject boxVisualiser;
+
         [Header("Passthrough")]
         [SerializeField]
         [Range(0f, 1f)]
@@ -119,6 +125,8 @@ namespace NanoverImd
             const string scaleKey = "suggested.interaction.scale";
             const string typeKey = "suggested.interaction.type";
             const string passthroughKey = "suggested.passthrough";
+            const string boxLockedKey = "suggested.box.locked";
+            const string boxHiddenKey = "suggested.box.hidden";
 
             if (simulation.Multiplayer.GetSharedState(scaleKey) is double scale)
             {
@@ -133,6 +141,24 @@ namespace NanoverImd
             if (simulation.Multiplayer.GetSharedState(passthroughKey) is double value)
             {
                 passthrough = (float) value;
+            }
+
+            if (simulation.Multiplayer.GetSharedState(boxLockedKey) is bool locked)
+            {
+                boxInteraction.SetActive(!locked);
+            }
+            else
+            {
+                boxInteraction.SetActive(true);
+            }
+
+            if (simulation.Multiplayer.GetSharedState(boxHiddenKey) is bool hidden)
+            {
+                boxVisualiser.SetActive(!hidden);
+            }
+            else
+            {
+                boxVisualiser.SetActive(true);
             }
         }
 

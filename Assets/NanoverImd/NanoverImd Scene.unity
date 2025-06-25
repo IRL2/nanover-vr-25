@@ -4323,6 +4323,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   simulation: {fileID: 431384315}
+  boxInteraction: {fileID: 1042607093}
+  boxVisualiser: {fileID: 765365844}
   passthrough: 1
   camera: {fileID: 199515959}
   connectionEstablished:

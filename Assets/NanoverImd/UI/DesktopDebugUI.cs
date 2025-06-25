@@ -37,18 +37,28 @@ namespace NanoverImd
             GUILayout.BeginArea(new Rect(16, 16, 192, 1024));
             GUILayout.Box("Nanover iMD");
 
-            GUILayout.Box("Server");
-            if (GUILayout.Button("Autoconnect"))
-                _ = simulation.AutoConnect();
+            GUILayout.Box("Connect");
+            //if (GUILayout.Button("Autoconnect"))
+            //    _ = simulation.AutoConnect();
 
-            if (GUILayout.Button("Direct Connect"))
+            if (GUILayout.Button("Manual"))
             {
                 directConnect = !directConnect;
             }
 
-            if (GUILayout.Button("Discover Services"))
+            if (GUILayout.Button("Discover"))
             {
                 discovery = !discovery;
+
+                if (discovery)
+                {
+                    var client = new Client();
+                    knownServiceHubs = client
+                        .SearchForServices(500)
+                        .GroupBy(hub => hub.Id)
+                        .Select(group => group.First())
+                        .ToList();
+                }
             }
 
             if (GUILayout.Button("Disconnect"))
@@ -58,11 +68,15 @@ namespace NanoverImd
 
             if (simulation.gameObject.activeSelf)
             {
-                GUILayout.Box("User");
+                GUILayout.Box("Interaction");
                 GUILayout.Label(
-                    $"Interaction Force: {simulation.ManipulableParticles.ForceScale:0.}x");
+                    $"Force Scale: {simulation.ManipulableParticles.ForceScale:0.}x");
                 simulation.ManipulableParticles.ForceScale =
                     GUILayout.HorizontalSlider(simulation.ManipulableParticles.ForceScale, 0, 5000);
+                GUILayout.Label(
+                    $"Force Type: {simulation.ManipulableParticles.ForceType}");
+                simulation.ManipulableParticles.ForceType =
+                    GUILayout.TextField(simulation.ManipulableParticles.ForceType);
 
                 GUILayout.Box("Simulation");
                 if (GUILayout.Button("Play"))

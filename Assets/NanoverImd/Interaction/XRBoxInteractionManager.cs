@@ -85,7 +85,7 @@ namespace NanoverImd.Interaction
             var controllerPoser = controller.GripPose;
             manipulator = new AttemptableManipulator(controllerPoser, AttemptGrabSpace);
 
-            button = characteristics.WrapUsageAsButton(CommonUsages.gripButton, () => controllerManager.CurrentInputMode == targetMode);
+            button = characteristics.WrapUsageAsButton(CommonUsages.gripButton, () => controllerManager.CurrentInputMode == targetMode && gameObject.activeInHierarchy);
             button.Pressed += manipulator.AttemptManipulation;
             button.Released += manipulator.EndActiveManipulation;
         }

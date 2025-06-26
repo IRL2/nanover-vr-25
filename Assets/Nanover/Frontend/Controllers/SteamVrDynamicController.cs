@@ -20,6 +20,9 @@ namespace Nanover.Frontend.Controllers
 
         [SerializeField]
         private VrController controller;
+
+        [SerializeField]
+        private VrControllerPrefab staticPrefab;
 #pragma warning restore 0649
 
         private VrControllerPrefab currentPrefab;
@@ -29,11 +32,13 @@ namespace Nanover.Frontend.Controllers
         {
             Assert.IsNotNull(controller);
             Assert.IsNotNull(prefabRoot);
+
+            controller.ResetController(staticPrefab);
         }
 
         private void Update()
         {
-            UpdateDevice();
+            //UpdateDevice();
         }
 
         private void UpdateDevice()

@@ -19,6 +19,14 @@ namespace Nanover.Frontend.Controllers
 
         public NanoverRenderModel RenderModel => renderModel;
 
+        private ControllerPivot cursor;
+        private ControllerPivot grip;
+        private ControllerPivot head;
+
+        private DirectPosedObject cursorPose = new DirectPosedObject();
+        private DirectPosedObject gripPose = new DirectPosedObject();
+        private DirectPosedObject headPose = new DirectPosedObject();
+
         /// <summary>
         /// Indicate the controller has been reset (connected or disconnected).
         /// </summary>
@@ -79,14 +87,6 @@ namespace Nanover.Frontend.Controllers
         {
             headPose.SetPose(cursor.Pose);
         }
-
-        private ControllerPivot cursor;
-        private ControllerPivot grip;
-        private ControllerPivot head;
-
-        private DirectPosedObject cursorPose = new DirectPosedObject();
-        private DirectPosedObject gripPose = new DirectPosedObject();
-        private DirectPosedObject headPose = new DirectPosedObject();
 
         /// <summary>
         /// The pose marking the location of a gripped hand.

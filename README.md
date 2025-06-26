@@ -15,7 +15,7 @@ See [the list of contributors](CONTRIBUTORS.md) for the individual authors of th
 
 ## Android (Meta Quest etc)
 * Sideload the `NanoVerIMD.apk` onto your device (you can use [SideQuest](https://sidequestvr.com/) for this).
-* Look in the `Unknown Sources` section of your apps list and run NanoVer IMD.
+* Look in the `Unknown Sources` section of your apps list and run NanoVer iMD.
 
 ## Windows (OpenXR / Meta Quest Link etc)
 * In the extracted directory, launch `StandaloneWindows64.exe`. Windows will likely prompt you with a warning about the executable not being signed. If it happens, click on the "More info" button, then "Run anyway". You will also likely be prompted by the Windows firewall, allow NanoVer to access the network.
@@ -32,14 +32,13 @@ See [the list of contributors](CONTRIBUTORS.md) for the individual authors of th
 # Installation for Development
 
 *  Clone this repository to a folder on your computer.
-*  Update the submodules with `git submodule sync` and `git submodule update --init --recursive --remote`.
 *  Download Unity Hub by visiting the [Unity Download Page](https://unity3d.com/get-unity/download) and clicking the green **Download Unity Hub** button.
 *  Install Unity Hub onto your computer.
 *  In Unity Hub, navigate to the **Projects** tab and click **Add** in the top right of Unity Hub.
 *  Select the folder which you downloaded the repository to.
 *  Install the version of Unity that Unity Hub tells you is required for this project.
 
-Once open in Unity, the main Unity scene can be found in `NanoverIMD/Assets/NanoverXR Scene`.
+Once open in Unity, the main Unity scene can be found in `NanoverImd/Assets/NanoverImd Scene`.
 
 ## Citation, Credits and External Libraries
 

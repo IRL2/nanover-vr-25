@@ -135,7 +135,7 @@ Material:
     - _StencilReadMask: 255
     - _StencilRef: 0
     - _StencilWriteMask: 255
-    - _Strength: 0.2
+    - _Strength: 0.573
     - _UVSec: 0
     - _UseImageAsSDF: 0
     - _UseUIAlphaClip: 0
@@ -146,7 +146,7 @@ Material:
     m_Colors:
     - _AlphaColor: {r: 1, g: 1, b: 1, a: 1}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 0.7529412}
+    - _Color: {r: 1, g: 1, b: 1, a: 0.8509804}
     - _ColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _ColorInner: {r: 1, g: 0, b: 0, a: 1}
     - _ColorOuter: {r: 0, g: 0, b: 0, a: 1}

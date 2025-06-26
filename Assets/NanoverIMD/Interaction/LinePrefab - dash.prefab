@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7333279381180429009}
   - component: {fileID: 3415973724405757878}
+  - component: {fileID: 6645876926700293706}
   m_Layer: 0
   m_Name: LinePrefab - dash
   m_TagString: Untagged
@@ -137,3 +138,17 @@ LineRenderer:
   m_UseWorldSpace: 0
   m_Loop: 0
   m_ApplyActiveColorSpace: 0
+--- !u!114 &6645876926700293706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8473074644553670826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c2f4130bb339cf45a00245847f038b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: e11891685906c7e4da1c91c193e0887a, type: 2}
+  speed: 0.2

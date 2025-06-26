@@ -1,13 +1,11 @@
 using System.Collections.Generic;
-using UnityEngine;
-
+using Nanover.Frontend.XR;
 using Nanover.Visualisation;
 using NanoverImd;
-
-using UnityEngine.XR;
-using Nanover.Frontend.XR;
-
+using NanoverImd.Interaction;
 using TMPro;
+using UnityEngine;
+using UnityEngine.XR;
 
 
 public class InteractionTrailsManager : MonoBehaviour
@@ -86,12 +84,22 @@ public class InteractionTrailsManager : MonoBehaviour
         if (frameSource.CurrentFrame == null) return;
         var data = frameSource.CurrentFrame.Data;
 
+
+
+
         int? atomIndex = GetSelectedAtomIndex(data);
-        if (atomIndex == null) return;
+        //if (atomIndex == null) return;
         lastAtomIndex = atomIndex;
 
-        Vector3? newPosition = GetPositionFromAtom(atomIndex.Value);
+        //Vector3? newPosition = GetPositionFromAtom(atomIndex.Value);
+
+        Vector3? newPosition = GetInteractionPositionFromAtoms(simulation);
+
+
         if (newPosition != null) lastPosition = newPosition;
+
+
+
 
         float? currentWork = GetCurrentWork(data);
         if (currentWork != null) lastWork = currentWork;
@@ -126,6 +134,39 @@ public class InteractionTrailsManager : MonoBehaviour
         }
     }
 
+
+    // how this is doing the right way (Mark's way) 
+    // https://github.com/IRL2/nanover-imd-vr/blob/main/Assets/NanoverImd/Interaction/InteractionWaveTestRenderer.cs
+    //private void ProcessFrame2()
+    //{
+    //var interactions = simulation.Interactions;
+    //var frame = simulation.FrameSynchronizer.CurrentFrame;
+
+    //ParticleInteractionCollection particles = interactions.Values.
+    //wavePool.MapConfig(interactions.Values, MapConfigToInstance);
+
+    //void MapConfigToInstance(ParticleInteraction interaction,
+    //                         SineConnectorRenderer renderer)
+    //{
+    //    var particlePositionSim = computeParticleCentroid(interaction.Particles);
+    //    var particlePositionWorld = transform.TransformPoint(particlePositionSim);
+
+    //    renderer.EndPosition = transform.TransformPoint(interaction.Position);
+    //    renderer.StartPosition = particlePositionWorld;
+    //}
+    //Vector3 computeParticleCentroid(IReadOnlyList<int> particleIds)
+    //    {
+    //        var centroid = Vector3.zero;
+
+    //        for (int i = 0; i < particleIds.Count; ++i)
+    //            centroid += frame.ParticlePositions[particleIds[i]];
+
+    //        return centroid / particleIds.Count;
+    //    }
+    //}
+
+
+
     private void UpdateInfo()
     {
         if (infoLabel == null) return;
@@ -154,10 +195,42 @@ public class InteractionTrailsManager : MonoBehaviour
     {
         if (data.TryGetValue("forces.user.index", out var capturedSelectedAtoms))
         {
-            if (capturedSelectedAtoms is uint[] selectedAtoms && selectedAtoms.Length > 0)
+            if (capturedSelectedAtoms is uint[] selectedAtoms && selectedAtoms.Length == 1)
+            {
                 return (int)selectedAtoms[0];
+            }
+            //else if (capturedSelectedAtoms is int[] selectedAtomsInt && selectedAtomsInt.Length > 1)
+            //{
+            //    return computeParticleCentroid(selectedAtomsInt).GetHashCode();
+            //}
         }
         return null;
+    }
+
+    private Vector3 GetInteractionPositionFromAtoms(NanoverImdSimulation sim)
+    {
+        var interactions = sim.Interactions;
+        var frame = sim.FrameSynchronizer.CurrentFrame;
+
+        IDictionary<string, object> data = frame.Data;
+
+        if (data.TryGetValue("forces.user.index", out var capturedSelectedAtoms))
+        {
+            if (capturedSelectedAtoms is uint[] selectedAtoms) { 
+                return computeParticleCentroid(selectedAtoms);
+            }
+        }
+        return Vector3.zero;
+    }
+
+    private Vector3 computeParticleCentroid(uint[] particleIds)
+    {
+        var centroid = Vector3.zero;
+
+        for (int i = 0; i < particleIds.Length; ++i)
+            centroid += simulation.FrameSynchronizer.CurrentFrame.ParticlePositions[particleIds[i]];  // todo: parametrize this or relocate this as inline function
+
+        return centroid / particleIds.Length;
     }
 
     private float? GetFrameTimestamp(IDictionary<string, object> data)
